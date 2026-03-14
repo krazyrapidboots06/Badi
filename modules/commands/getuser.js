@@ -8,30 +8,29 @@ module.exports.config = {
     usePrefix: false
 };
 
-module.exports.run = async function ({ event, args, api, reply }) {
-    const senderID = event.sender.id;
-
+module.exports.run = async function ({ api, reply }) {
     try {
-        const users = await db.UserStat.find().sort({ lastActive: -1 }).limit(10).lean();
-        if (!users.length) return reply("database empty.");
+        const list = await db.UserStat.find().sort({ lastActive: -1 }).limit(10).lean();
 
-        let txt = "ðŸ“‹ user database\n\n";
+        if (!list.length) return reply("nothing in the database yet.");
 
-        for (let i = 0; i < users.length; i++) {
-            const u = users[i];
-            let displayName = u.name;
+        let msg = "recent users list\n\n";
 
-            if (displayName === "messenger user") {
-                const liveInfo = await api.getUserInfo(u.userId);
-                displayName = liveInfo.name;
+        for (let i = 0; i < list.length; i++) {
+            const user = list[i];
+            let name = user.name;
+
+            if (name === "messenger user") {
+                const info = await api.getUserInfo(user.userId);
+                name = info.name;
             }
 
-            const status = global.BANNED_USERS.has(u.userId) ? "ðŸš« " : "ðŸ‘¤ ";
-            txt += `${i + 1}. ${status}${displayName}\nid: ${u.userId}\n\n`;
+            const icon = global.BANNED_USERS.has(user.userId) ? "🚫" : "👤";
+            msg += `${i + 1}. ${icon} ${name}\nid: ${user.userId}\n\n`;
         }
 
-        reply(txt.toLowerCase());
+        reply(msg.toLowerCase());
     } catch (e) {
-        reply("failed to fetch list.");
+        reply("failed to fetch the list.");
     }
 };
