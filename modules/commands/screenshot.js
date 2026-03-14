@@ -3,43 +3,50 @@ const { isPrivateHost } = require("../utils/helpers");
 module.exports.config = {
     name: "screenshot",
     aliases: ["ss", "webshot"],
-    author: "Sethdico",
-    version: "1.2",
+    author: "sethdico",
+    version: "1.3",
     category: "Utility",
-    description: "take a screenshot of any website",
     adminOnly: false,
     usePrefix: false,
     cooldown: 5,
 };
 
-module.exports.run = async function ({ event, args, api }) {
-    let targetUrl = args.join("");
-    if (!targetUrl) return api.sendMessage("usage: screenshot <url>", event.sender.id);
+module.exports.run = async function ({ event, args, api, reply }) {
+    let targetUrl = event.message?.reply_to?.text || args.join("");
+
+    if (!targetUrl) {
+        return reply("📸 website screenshot\n━━━━━━━━━━━━━━━━\nhow to use:\n  ss <link>\n  or reply to a link with 'ss'\n\nexample:\n  ss github.com");
+    }
+
+    targetUrl = targetUrl.replace(/\s+/g, "").replace(/\[dot\]|\(dot\)/gi, ".");
 
     try {
         if (!targetUrl.startsWith('http')) targetUrl = 'https://' + targetUrl;
         
         const isUnsafe = await isPrivateHost(targetUrl);
         if (isUnsafe) {
-            return api.sendMessage("❌ that url is not allowed", event.sender.id);
+            return reply("that link isn't allowed for security reasons.");
         }
 
         const url = new URL(targetUrl);
         if (!['http:', 'https:'].includes(url.protocol)) {
-            return api.sendMessage("❌ invalid protocol", event.sender.id);
+            return reply("invalid protocol. use a normal link.");
         }
         targetUrl = url.href;
 
     } catch (e) {
-        return api.sendMessage("❌ invalid url", event.sender.id);
+        return reply("that doesn't look like a valid link.");
     }
 
-    api.sendMessage(`📸 capturing...`, event.sender.id);
+    reply(`capturing...`);
+    if (api.sendTypingIndicator) api.sendTypingIndicator(true, event.sender.id);
     
     try {
         const screenshotUrl = `https://image.thum.io/get/width/1200/crop/800/noanimate/${targetUrl}`;
         await api.sendAttachment("image", screenshotUrl, event.sender.id);
     } catch (e) {
-        api.sendMessage("❌ failed to capture.", event.sender.id);
+        reply("failed to capture the site. maybe it's down or blocking bots.");
+    } finally {
+        if (api.sendTypingIndicator) api.sendTypingIndicator(false, event.sender.id);
     }
 };
