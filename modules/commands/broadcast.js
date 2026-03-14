@@ -2,10 +2,9 @@ const db = require("../core/database");
 
 module.exports.config = { 
     name: "broadcast", 
-    author: "Sethdico",
-    version: "3.0",
+    author: "sethdico",
     category: "Admin",
-    description: "Send announcement to all users.",
+    description: "send an announcement to everyone.",
     adminOnly: true,
     usePrefix: false,
     cooldown: 10 
@@ -13,38 +12,26 @@ module.exports.config = {
 
 module.exports.run = async ({ event, args, api, reply }) => {
     const msg = args.join(" ");
-    const senderID = event.sender.id;
-
-    if (!msg) return reply("📢 Usage: broadcast <message>");
+    if (!msg) return reply("what's the announcement?");
 
     try {
         const users = await db.getAllUsers();
-        const recipients = users.filter(u => u.userId !== senderID).map(u => u.userId);
+        const recipients = users.filter(u => u.userId !== event.sender.id);
 
-        if (recipients.length === 0) return reply("ℹ️ no active users to broadcast to");
+        if (!recipients.length) return reply("no users to reach.");
 
-        reply(`🚀 broadcasting to ${recipients.length} users...`);
+        reply(`📢 sending to ${recipients.length} people...`);
 
-        let success = 0, failed = 0;
-        const errors = [];
-
-        for (const id of recipients) {
+        let success = 0;
+        for (const u of recipients) {
             try {
-                await api.sendMessage(`📢 **ANNOUNCEMENT**\n\n${msg}`, id);
+                await api.sendMessage(`📢 **announcement**\n\n${msg}`, u.userId);
                 success++;
-                await new Promise(r => setTimeout(r, 500)); // Rate limit
-            } catch (err) {
-                failed++;
-                if (errors.length < 5) errors.push(`${id}: ${err.message}`);
-            }
+                await new Promise(r => setTimeout(r, 500)); 
+            } catch (e) {}
         }
-
-        let report = `✅ **Broadcast Complete**\n────────────────\n✓ Sent: ${success}\n✗ Failed: ${failed}`;
-        if (errors.length > 0) report += `\n\nErrors:\n${errors.join("\n")}`;
-        
-        reply(report);
-
+        reply(`done. sent to ${success} people.`);
     } catch (e) { 
-        reply("❌ broadcast failed"); 
+        reply("broadcast failed."); 
     }
 };
