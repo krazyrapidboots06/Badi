@@ -2,18 +2,23 @@ const axios = require("axios");
 
 module.exports.config = {
     name: "gmage",
-    author: "Sethdico",
-    version: "1.0",
+    author: "sethdico",
     category: "Media",
     description: "google image search",
     adminOnly: false,
     usePrefix: false,
-    cooldown: 10,
+    cooldown: 5,
 };
 
 module.exports.run = async function ({ event, args, api, reply }) {
     const query = args.join(" ");
-    if (!query) return reply("search what?");
+    const id = event.sender.id;
+
+    if (!query) {
+        return reply("🖼️ **google images**\n━━━━━━━━━━━━━━━━\nhow to use:\n  gmage <search term>\n\nexample:\n  gmage sunset beach");
+    }
+
+    if (api.sendTypingIndicator) api.sendTypingIndicator(true, id);
 
     try {
         const res = await axios.get("https://api-library-kohi.onrender.com/api/gmage", {
@@ -21,16 +26,18 @@ module.exports.run = async function ({ event, args, api, reply }) {
         });
 
         const images = res.data.data;
-        if (!images || images.length === 0) return reply("no images found.");
+        if (!images || !images.length) return reply("couldn't find any images.");
 
         const cards = images.slice(0, 10).map(url => ({
-            title: query,
+            title: query.substring(0, 80),
             image_url: url,
-            buttons: [{ type: "web_url", url: url, title: "view" }]
+            buttons: [{ type: "web_url", url: url, title: "view image" }]
         }));
 
-        await api.sendCarousel(cards, event.sender.id);
+        await api.sendCarousel(cards, id);
     } catch (e) {
-        reply("google image search failed.");
+        reply("google is acting up.");
+    } finally {
+        if (api.sendTypingIndicator) api.sendTypingIndicator(false, id);
     }
 };
