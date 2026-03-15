@@ -1,45 +1,45 @@
 const { http } = require("../utils");
 
 module.exports.config = {
-  name: "venice",
-  author: "sethdico",
-  version: "1.0",
-  category: "AI",
-  description: "Get answers from Venice AI",
-  adminOnly: false,
-  usePrefix: false,
-  cooldown: 5,
+    name: "venice",
+    author: "sethdico",
+    category: "AI",
+    description: "precise ai model.",
+    adminOnly: false,
+    usePrefix: false,
+    cooldown: 5,
 };
 
 module.exports.run = async function ({ event, args, api, reply }) {
-  const query = args.join(" ");
-  const uid = event.sender.id;
+    const senderID = event.sender.id;
+    const query = args.join(" ");
 
-  if (!query) return reply("Please provide a question for Venice AI.");
-
-  if (api.sendTypingIndicator) api.sendTypingIndicator(true, uid);
-
-  try {
-    const res = await http.get("https://shin-apis.onrender.com/ai/venice", {
-      params: { 
-        question: query,
-        systemPrompt: "a helpful precise AI" 
-      },
-      timeout: 60000
-    });
-
-    const answer = res.data.answer;
-
-    if (answer) {
-      api.sendMessage(`🎭 **VENICE AI**\n────────────────\n${answer}`, uid);
-    } else {
-      reply("I couldn't get a response from Venice AI.");
+    if (!query) {
+        return reply("🎭 **venice ai**\n━━━━━━━━━━━━━━━━\nhow to use:\n  venice <question>\n\nexample:\n  venice explain string theory");
     }
 
-  } catch (e) {
-    console.error("Venice AI Error:", e.message);
-    reply("❌ The Venice AI service is currently unavailable.");
-  } finally {
-    if (api.sendTypingIndicator) api.sendTypingIndicator(false, uid);
-  }
+    if (api.sendTypingIndicator) api.sendTypingIndicator(true, senderID);
+
+    try {
+        const res = await http.get("https://shin-apis.onrender.com/ai/venice", {
+            params: { 
+                question: query,
+                systemPrompt: "a helpful precise ai" 
+            },
+            timeout: 60000
+        });
+
+        const answer = res.data.answer;
+
+        if (answer) {
+            await api.sendMessage(`🎭 **venice ai**\n\n${answer}`.toLowerCase(), senderID);
+        } else {
+            reply("couldn't get a response from venice.");
+        }
+
+    } catch (e) {
+        reply("venice is currently unavailable.");
+    } finally {
+        if (api.sendTypingIndicator) api.sendTypingIndicator(false, senderID);
+    }
 };
