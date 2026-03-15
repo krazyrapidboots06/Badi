@@ -3,17 +3,16 @@ const { http } = require("../utils");
 module.exports.config = {
     name: "gpt4o",
     author: "sethdico",
-    version: "1.1",
     category: "AI",
-    description: "Interact with GPT-4o AI with conversation history, image generation, recognition, and browsing.",
+    description: "gpt-4o with vision and memory.",
     adminOnly: false,
     usePrefix: false,
     cooldown: 5,
 };
 
 module.exports.run = async function ({ event, args, api, reply }) {
-    const query = args.join(" ");
     const senderID = event.sender.id;
+    const query = args.join(" ");
 
     const attachments = [
         ...(event.message?.attachments || []),
@@ -23,7 +22,7 @@ module.exports.run = async function ({ event, args, api, reply }) {
     const imageUrl = attachments.length > 0 ? attachments[0].payload.url : "";
 
     if (!query && !imageUrl) {
-        return reply("What's on your mind? You can also send or reply to an image.");
+        return reply("🌌 **gpt-4o**\n━━━━━━━━━━━━━━━━\nask me anything or send an image for me to analyze.");
     }
 
     if (api.sendTypingIndicator) api.sendTypingIndicator(true, senderID);
@@ -31,9 +30,9 @@ module.exports.run = async function ({ event, args, api, reply }) {
     try {
         const response = await http.get("https://haji-mix-api.gleeze.com/api/gpt4o", {
             params: {
-                ask: query || "Describe this image",
+                ask: query || "describe this image",
                 uid: senderID,
-                roleplay: "You are a helpful and accurate AI assistant. Chatgpt4o by seth asher.",
+                roleplay: "helpful and accurate assistant.",
                 img_url: imageUrl
             }
         });
@@ -41,17 +40,17 @@ module.exports.run = async function ({ event, args, api, reply }) {
         const answer = response.data.answer;
 
         if (!answer) {
-            return reply("I couldn't get a response. Maybe try rephrasing your question?");
+            return reply("couldn't get a response. try again?");
         }
 
-        const formattedAnswer = answer
+        const formatted = answer
             .replace(/\[(.*?)\]\((https?:\/\/.*?)\)/g, (match, text, url) => `${text}: ${url}`)
             .trim();
 
-        await api.sendMessage(`🌌 **GPT-4o**\n────────────────\n${formattedAnswer}`, senderID);
+        await api.sendMessage(`🌌 **gpt-4o**\n\n${formatted}`.toLowerCase(), senderID);
 
     } catch (error) {
-        reply("I'm having a bit of trouble connecting to my brain right now. Try again in a second?");
+        reply("i'm having trouble connecting to my brain right now.");
     } finally {
         if (api.sendTypingIndicator) api.sendTypingIndicator(false, senderID);
     }
