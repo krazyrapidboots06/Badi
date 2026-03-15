@@ -3,7 +3,7 @@ const { http } = require("../utils");
 module.exports.config = {
     name: "nasa",
     author: "sethdico",
-    version: "2.1",
+    version: "2.2",
     category: "Fun",
     description: "space photo of the day",
     adminOnly: false,
@@ -17,8 +17,8 @@ module.exports.run = async function ({ event, args, api, reply }) {
 
     if (!apiKey) return reply("nasa api key is missing.");
 
-    if (args[0] === "help") {
-        return reply("🚀 **nasa apod**\n━━━━━━━━━━━━━━━━\nhow to use:\n  nasa - today's photo\n  nasa random - random space photo");
+    if (!args[0]) {
+        return reply("🚀 **nasa apod**\n━━━━━━━━━━━━━━━━\nhow to use:\n  nasa - today's photo\n  nasa random - random photo\n\nexample:\n  nasa random");
     }
 
     let url = `https://api.nasa.gov/planetary/apod?api_key=${apiKey}`;
@@ -41,7 +41,7 @@ module.exports.run = async function ({ event, args, api, reply }) {
         }
         
         const btns = [{ type: "postback", title: "another one", payload: "nasa random" }];
-        await api.sendButton(msg, btns, senderID);
+        await api.sendButton(msg.toLowerCase(), btns, senderID);
 
     } catch (e) {
         reply("nasa api is sleeping.");
