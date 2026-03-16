@@ -7,9 +7,21 @@ module.exports = async function (event, api) {
     if (!event.sender?.id || event.message?.is_echo) return;
     
     const id = event.sender.id;
-    const mid = event.message?.mid;
     const reply = (msg) => api.sendMessage(msg, id);
 
+    if (event.postback?.payload) {
+        const payload = event.postback.payload;
+        if (payload.startsWith("ban ") || payload.startsWith("unban ")) {
+            const [action, target] = payload.split(" ");
+            const fakeEvent = { sender: { id: id } };
+            return require("../modules/commands/ban").run({ event: fakeEvent, args: [action, target], reply });
+        }
+        if (payload.startsWith("copy_")) {
+            return reply(`id: ${payload.split("_")[1]}`);
+        }
+    }
+
+    const mid = event.message?.mid;
     if (mid) {
         if (activeRequests.has(mid)) return;
         activeRequests.add(mid);
@@ -23,19 +35,11 @@ module.exports = async function (event, api) {
     }
     
     const isAdmin = role === "admin";
-    const isMod = role === "moderator" || isAdmin;
-
     const userInfo = await api.getUserInfo(id);
     db.syncUser(id, userInfo);
 
     if (userInfo.name !== "messenger user") {
         await db.UserStat.updateOne({ userId: id }, { name: userInfo.name }, { upsert: true });
-    }
-
-    if (global.MONITOR_MODE && !isAdmin) {
-        for (const adminId of global.ADMINS) {
-            api.sendMessage(`[monitor] ${id}: ${event.message?.text || "media"}`, adminId);
-        }
     }
 
     if (global.MAINTENANCE_MODE && !isAdmin) return;
@@ -48,12 +52,8 @@ module.exports = async function (event, api) {
     const command = global.client.commands.get(cmdName) || global.client.commands.get(global.client.aliases.get(cmdName));
 
     if (command) {
-        if (global.disabledCommands?.has(command.config.name) && !isAdmin) {
-            return reply("command disabled.");
-        }
-
+        if (global.disabledCommands?.has(command.config.name) && !isAdmin) return reply("command disabled.");
         if (command.config.adminOnly && !isAdmin) return;
-        if (command.config.modOnly && !isMod) return;
 
         if (command.config.cooldown && !isAdmin) {
             const key = `${id}-${command.config.name}`;
