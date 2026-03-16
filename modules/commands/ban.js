@@ -6,7 +6,8 @@ module.exports.config = {
     author: "sethdico",
     category: "Admin",
     adminOnly: true,
-    usePrefix: false
+    usePrefix: false,
+    cooldown: 0
 };
 
 module.exports.run = async function ({ args, reply }) {
@@ -17,7 +18,7 @@ module.exports.run = async function ({ args, reply }) {
     let reason = args.slice(isUnban ? 2 : (action === "ban" ? 2 : 1)).join(" ") || "no reason.";
 
     if (!targetID || isNaN(targetID)) {
-        return reply("usage: ban <id> <reason>\nusage: unban <id>");
+        return reply("usage:\n  ban <id> <reason>\n  unban <id>");
     }
 
     if (global.ADMINS.has(targetID)) {
@@ -33,7 +34,7 @@ module.exports.run = async function ({ args, reply }) {
     try {
         await db.addBan(targetID, reason);
         global.BANNED_USERS.add(targetID);
-        reply(`banned ${targetID}.\nreason: ${reason}`);
+        reply(`banned ${targetID}.\nreason: ${reason}`.toLowerCase());
     } catch (e) {
         reply("failed to ban.");
     }
