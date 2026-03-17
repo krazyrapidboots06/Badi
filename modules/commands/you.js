@@ -2,22 +2,38 @@ const { http } = require("../utils");
 const API_URLS = require("../../config/apis");
 
 module.exports.config = { 
-    name: "you", author: "Sethdico", category: "AI", version: "1.1", description: "You.com Search.", adminOnly: false, usePrefix: false, cooldown: 5 
+    name: "you", 
+    author: "sethdico", 
+    category: "AI", 
+    description: "you.com search", 
+    adminOnly: false, 
+    usePrefix: false, 
+    cooldown: 5 
 };
 
 module.exports.run = async ({ event, args, api, reply }) => {
-    if (!args[0]) return reply("🔍 Usage: you <question>");
-    if (api.sendTypingIndicator) api.sendTypingIndicator(true, event.sender.id);
+    const senderID = event.sender.id;
+    const input = args.join(" ").trim();
+    
+    if (!input) {
+        return reply("🔍 **you.com ai**\n━━━━━━━━━━━━━━━━\nhow to use:\n  you <question>\n\nexample:\n  you who won the last world cup");
+    }
+
+    if (api.sendTypingIndicator) api.sendTypingIndicator(true, senderID);
 
     try {
         const res = await http.get(API_URLS.you, { 
-            params: { chat: args.join(" ") },
+            params: { chat: input },
             timeout: 60000
         });
-        api.sendMessage(`🔍 **You.com**\n────────────────\n${res.data.message || res.data.response || "No response."}`, event.sender.id);
+        
+        const answer = res.data.message || res.data.response;
+        if (!answer) return reply("no response.");
+        
+        await api.sendMessage(`🔍 **you.com**\n\n${answer}`.toLowerCase(), senderID);
     } catch (e) { 
-        reply("❌ You.com is down."); 
+        reply("you.com is acting up."); 
     } finally {
-        if (api.sendTypingIndicator) api.sendTypingIndicator(false, event.sender.id);
+        if (api.sendTypingIndicator) api.sendTypingIndicator(false, senderID);
     }
 };
