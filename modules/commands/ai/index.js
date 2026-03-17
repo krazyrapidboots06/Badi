@@ -21,7 +21,7 @@ async function executeAction(action, event, api, reply) {
     if (!command) return;
     if (cmdName === "remind") return await command.run({ event, args: [action.time, action.msg], api, reply });
     if (cmdName === "pinterest") {
-        try { await command.run({ event, args: [action.query, (action.count || 5).toString()], api, reply }); } 
+        try { await command.run({ event, args:[action.query, (action.count || 5).toString()], api, reply }); } 
         catch (e) { const gmage = global.client.commands.get("gmage"); if (gmage) await gmage.run({ event, args: [action.query], api, reply }); }
         return;
     }
@@ -51,15 +51,14 @@ async function upload(senderId, data, token) {
         form.append('message', JSON.stringify({ attachment: { type: mime.startsWith('image/') ? 'image' : 'file', payload: { is_reusable: true } } }));
         form.append('filedata', buffer, { filename: data.fileName || 'document.txt', contentType: mime });
         await axios.post(`https://graph.facebook.com/v21.0/me/messages?access_token=${token}`, form, { headers: form.getHeaders() });
-    } catch (e) { console.error("upload failed:", e.message); }
+    } catch (e) {}
 }
 
 module.exports.config = {
     name: "amdus",
     author: "sethdico",
-    version: "47.7",
     category: "AI",
-    description: "Main amdus ai assistant.",
+    description: "main amdus ai assistant.",
     adminOnly: false,
     usePrefix: false,
     cooldown: 0,
@@ -72,36 +71,44 @@ module.exports.run = async function ({ event, args, api, reply }) {
     if ((mid && processedMids.has(mid)) || userLock.has(uid)) return;
     const last = lastRequests.get(uid) || 0;
     if (Date.now() - last < COOLDOWN_MS && !global.ADMINS.has(uid)) return;
+    
     if (mid) processedMids.add(mid);
     lastRequests.set(uid, Date.now());
     userLock.add(uid);
     
     const query = args.join(" ").trim();
     const token = global.PAGE_ACCESS_TOKEN;
+
+    const atts = [...(event.message?.reply_to?.attachments || []), ...(event.message?.attachments || [])];
+    let ctx =[];
+    const seen = new Set();
+    
+    for (const f of atts) {
+        const url = f.payload.url;
+        if (seen.has(url)) continue;
+        seen.add(url);
+        const ext = path.extname(url.split('?')[0]).toLowerCase();
+        const type = f.type === "image" ? "image" : (f.type === "video" ? "video" : "document");
+        if (f.type !== "file" ||['.txt', '.js', '.json', '.md', '.py', '.docx', '.doc', '.pdf', '.pptx', '.ppt'].includes(ext)) {
+            ctx.push(`[${type}_url]: ${f.payload.url}`);
+        }
+    }
+
+    if (!query && ctx.length === 0) {
+        userLock.delete(uid);
+        if (api.sendTypingIndicator) api.sendTypingIndicator(false, uid);
+        return reply("🧠 **amdus ai**\n━━━━━━━━━━━━━━━━\nhow to use:\n  amdus <message>\n  amdus <instruction> (reply to an image/file)\n\nexamples:\n  amdus write a python script\n  amdus summarize this document\n\nnote: i can see images, short videos, and docs. you also don't need to type 'amdus' if you're just chatting directly with me.");
+    }
+
+    if (ctx.length > 0 && !query) {
+        userLock.delete(uid);
+        if (api.sendTypingIndicator) api.sendTypingIndicator(false, uid);
+        return reply("media received. reply to it with what you want me to do (e.g., 'amdus describe this').");
+    }
+
     if (api.sendTypingIndicator) api.sendTypingIndicator(true, uid);
 
     try {
-        const atts = [...(event.message?.reply_to?.attachments || []), ...(event.message?.attachments || [])];
-        let ctx = [];
-        const seen = new Set();
-        
-        for (const f of atts) {
-            const url = f.payload.url;
-            if (seen.has(url)) continue;
-            seen.add(url);
-            const ext = path.extname(url.split('?')[0]).toLowerCase();
-            const type = f.type === "image" ? "image" : (f.type === "video" ? "video" : "document");
-            if (f.type !== "file" || ['.txt', '.js', '.json', '.md', '.py', '.docx', '.doc', '.pdf', '.pptx', '.ppt'].includes(ext)) {
-                ctx.push(`[${type}_url]: ${f.payload.url}`);
-            }
-        }
-
-        if (ctx.length > 0 && !query) {
-            userLock.delete(uid);
-            if (api.sendTypingIndicator) api.sendTypingIndicator(false, uid);
-            return reply("🧠 **amdus ai**\n\ni can analyze photos, short videos, and docs. just send the file and reply to it with your question.\n\ni also handle web search, image gen, and real-time data. you don't need to type 'amdus' to use me and just send a direct message.");
-        }
-
         const session = getSession(uid);
         const res = await askChipp(ctx.length ? `${ctx.join("\n")}\n\nuser_query: ${query}` : query, null, session);
         
@@ -120,7 +127,7 @@ module.exports.run = async function ({ event, args, api, reply }) {
         let fileHandled = false;
 
         let match;
-        const mdLinks = [];
+        const mdLinks =[];
         while ((match = mdLinkRegex.exec(text)) !== null) {
             mdLinks.push({ full: match[0], title: match[1], url: match[2].replace(/[).,]+$/, '') });
         }
@@ -137,7 +144,7 @@ module.exports.run = async function ({ event, args, api, reply }) {
             }
         }
 
-        const remainingUrls = text.match(urlRegex) || [];
+        const remainingUrls = text.match(urlRegex) ||[];
         for (const url of remainingUrls) {
             const cleanUrl = url.replace(/[).,]+$/, '');
             const isChipp = cleanUrl.includes('chipp-images') || cleanUrl.includes('chipp-application-files') || cleanUrl.includes('app.chipp.ai/api/downloads');
