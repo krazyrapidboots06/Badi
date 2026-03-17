@@ -1,45 +1,45 @@
-const LAWS = [
-    "Never Outshine the Master", "Never Put Too Much Trust in Friends", "Conceal Your Intentions", 
-    "Always Say Less than Necessary", "So Much Depends on Reputation", "Court Attention at all Cost", 
-    "Get others to do the work", "Make other people come to you", "Win through your actions", 
-    "Avoid the unhappy and unlucky", "Learn to keep people dependent on you", "Use selective honesty",
-    "Appeal to self-interest", "Pose as a friend, work as a spy", "Crush your enemy totally", 
-    "Use absence to increase respect", "Keep others in suspended terror", "Do not build fortresses",
-    "Know who you’re dealing with", "Do not commit to anyone", "Play a sucker to catch a sucker",
-    "Use the surrender tactic", "Concentrate your forces", "Play the perfect courtier", "Re-create yourself",
-    "Keep your hands clean", "Play on people’s need to believe", "Enter action with boldness",
-    "Plan all the way to the end", "Make accomplishments seem effortless", "Control the options",
-    "Play to people’s fantasies", "Discover each man’s thumbscrew", "Be royal in your own fashion",
-    "Master the art of timing", "Disdain things you cannot have", "Create compelling spectacles",
-    "Think as you like but behave like others", "Stir up waters to catch fish", "Despise the free lunch",
-    "Avoid stepping into a great man’s shoes", "Strike the shepherd", "Work on the hearts and minds",
-    "Disarm with the mirror effect", "Preach change but never reform too much", "Never appear too perfect",
-    "Do not go past the mark", "Assume formlessness"
+const LAWS =[
+    "never outshine the master", "never put too much trust in friends", "conceal your intentions", 
+    "always say less than necessary", "so much depends on reputation", "court attention at all cost", 
+    "get others to do the work", "make other people come to you", "win through your actions", 
+    "avoid the unhappy and unlucky", "learn to keep people dependent on you", "use selective honesty",
+    "appeal to self-interest", "pose as a friend, work as a spy", "crush your enemy totally", 
+    "use absence to increase respect", "keep others in suspended terror", "do not build fortresses",
+    "know who you’re dealing with", "do not commit to anyone", "play a sucker to catch a sucker",
+    "use the surrender tactic", "concentrate your forces", "play the perfect courtier", "re-create yourself",
+    "keep your hands clean", "play on people’s need to believe", "enter action with boldness",
+    "plan all the way to the end", "make accomplishments seem effortless", "control the options",
+    "play to people’s fantasies", "discover each man’s thumbscrew", "be royal in your own fashion",
+    "master the art of timing", "disdain things you cannot have", "create compelling spectacles",
+    "think as you like but behave like others", "stir up waters to catch fish", "despise the free lunch",
+    "avoid stepping into a great man’s shoes", "strike the shepherd", "work on the hearts and minds",
+    "disarm with the mirror effect", "preach change but never reform too much", "never appear too perfect",
+    "do not go past the mark", "assume formlessness"
 ];
 
 module.exports.config = {
     name: "48laws",
-    author: "Sethdico",
-    version: "2.0",
+    author: "sethdico",
     category: "Fun",
-    description: "Random Law of Power with flow logic.",
+    description: "get a random rule from robert greene's book 'the 48 laws of power'.",
     adminOnly: false,
     usePrefix: false,
     cooldown: 2,
 };
 
-module.exports.run = async function ({ event, args, api }) {
-    let num = args[0] ? parseInt(args[0]) : Math.floor(Math.random() * 48) + 1;
-    if (isNaN(num) || num < 1 || num > 48) num = Math.floor(Math.random() * 48) + 1;
+module.exports.run = async function ({ event, args, api, reply }) {
+    let num = parseInt(args[0]);
 
-    const msg = `📖 **Law #${num}**\n━━━━━━━━━━━━━━━━\n${LAWS[num-1]}`;
-    
-    // Flow: Payload "48laws" picks a new random law instantly
-    const buttons = [{ type: "postback", title: "🎲 Another Law", payload: "48laws" }];
+    if (!num || num < 1 || num > 48) {
+        num = Math.floor(Math.random() * 48) + 1;
+    }
+
+    const msg = `📖 **law #${num}**\n━━━━━━━━━━━━━━━━\n${LAWS[num - 1]}`;
+    const btns =[{ type: "postback", title: "another law", payload: "48laws" }];
     
     try {
-        await api.sendButton(msg, buttons, event.sender.id);
+        await api.sendButton(msg, btns, event.sender.id);
     } catch (e) {
-        api.sendMessage(msg, event.sender.id);
+        reply(msg);
     }
 };
