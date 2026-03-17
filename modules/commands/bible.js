@@ -2,27 +2,26 @@ const { http } = require("../utils");
 
 module.exports.config = {
     name: "bible",
-    author: "Sethdico",
-    version: "2.0",
+    author: "sethdico",
     category: "Fun",
-    description: "Random Bible verse.",
+    description: "random bible verse",
     adminOnly: false,
     usePrefix: false,
     cooldown: 5,
 };
 
-module.exports.run = async function ({ event, api }) {
-  try {
-    const res = await http.get("https://urangkapolka.vercel.app/api/bible");
-    const { verse, reference } = res.data;
+module.exports.run = async function ({ event, api, reply }) {
+    const senderID = event.sender.id;
     
-    const msg = `✝️ **${reference || "Bible"}**\n━━━━━━━━━━━━━━━━\n${verse || res.data.text}`;
-    
-    // Flow: Postback "bible" triggers the next verse
-    const buttons = [{ type: "postback", title: "📖 New Verse", payload: "bible" }];
+    try {
+        const res = await http.get("https://urangkapolka.vercel.app/api/bible");
+        const { verse, reference, text } = res.data;
+        
+        const msg = `✝️ **${reference || "bible"}**\n\n${verse || text}`;
+        const btns = [{ type: "postback", title: "new verse", payload: "bible" }];
 
-    await api.sendButton(msg, buttons, event.sender.id);
-  } catch (e) {
-    api.sendMessage("❌ Amen... but the API is currently offline.", event.sender.id);
-  }
+        await api.sendButton(msg.toLowerCase(), btns, senderID);
+    } catch (e) {
+        reply("amen... but the api is currently sleeping.");
+    }
 };
