@@ -97,7 +97,7 @@ module.exports.run = async function ({ event, args, api, reply }) {
     if (!query && ctx.length === 0) {
         userLock.delete(uid);
         if (api.sendTypingIndicator) api.sendTypingIndicator(false, uid);
-        return reply("🧠 **amdus ai**\n━━━━━━━━━━━━━━━━\nhow to use:\n  amdus <message>\n  amdus <instruction> (reply to an image/file)\n\nexamples:\n  amdus write a python script\n  amdus summarize this document\n\nnote: i can see images, short videos, and docs. you also don't need to type 'amdus' if you're just chatting directly with me.");
+        return reply("🧠 **amdus ai**\n━━━━━━━━━━━━━━━━\nhow to use:\n  amdus <message>\n  amdus <instruction> (reply to an image/file)\n\nexamples:\n  amdus write a python script\n  amdus summarize this document\n\nnote: i can see images, short videos, docs, can generate images and generate files. you also don't need to type 'amdus' if you're just chatting directly with me.");
     }
 
     if (ctx.length > 0 && !query) {
