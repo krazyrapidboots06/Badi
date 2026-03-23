@@ -15,7 +15,7 @@ module.exports.run = async function ({ event, api }) {
   const msg = "i'm seth asher and i made this bot. check my links if u want to talk.";
 
   const buttons = [
-    { type: "web_url", url: "https://www.facebook.com/seth09asher", title: "facebook" },
+    { type: "web_url", url: "https://www.facebook.com/s8tsh.3r", title: "facebook" },
     { type: "web_url", url: "https://github.com/sethdico", title: "github" }
   ];
 
