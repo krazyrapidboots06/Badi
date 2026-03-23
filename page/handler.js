@@ -11,13 +11,19 @@ module.exports = async function (event, api) {
 
     if (event.postback?.payload) {
         const payload = event.postback.payload;
+
         if (payload.startsWith("ban ") || payload.startsWith("unban ")) {
             const [action, target] = payload.split(" ");
-            const fakeEvent = { sender: { id: id } };
-            return require("../modules/commands/ban").run({ event: fakeEvent, args: [action, target], reply });
+            return require("../modules/commands/ban").run({ args: [action, target], reply });
         }
-        if (payload.startsWith("copy_")) {
-            return reply(`id: ${payload.split("_")[1]}`);
+
+        if (payload.startsWith("chat_")) {
+            const sid = payload.split("_")[1];
+            return require("../modules/commands/transcript").run({ args: [sid], api, reply });
+        }
+
+        if (!isNaN(payload)) {
+            return reply(payload);
         }
     }
 
@@ -68,7 +74,7 @@ module.exports = async function (event, api) {
             await command.run({ event, args, api, reply });
             return;
         } catch (e) { 
-            return reply("error executing command."); 
+            return reply("error."); 
         }
     } 
 
