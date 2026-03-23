@@ -46,11 +46,12 @@ module.exports.run = async function ({ args, event, api, reply }) {
         const target = session.users[num - 1];
         const isBanned = global.BANNED_USERS.has(target.userId);
         
-        const msg = `👤 user profile\n\nname: ${target.name}\nid: ${target.userId}\nactive: ${new Date(target.lastActive).toLocaleDateString()}\ncmds used: ${target.count}`;
+        const msg = `👤 user profile\n\nname: ${target.name}\nid: ${target.userId}\nactive: ${new Date(target.lastActive).toLocaleDateString()}\ncmds: ${target.count}`;
         
-        const btns =[
+        const btns = [
             { type: "postback", title: isBanned ? "unban" : "ban", payload: `${isBanned ? "unban" : "ban"} ${target.userId}` },
-            { type: "postback", title: "copy id", payload: `copy_${target.userId}` }
+            { type: "postback", title: "copy id", payload: target.userId },
+            { type: "postback", title: "view chat", payload: `chat_${target.lastSessionId}` }
         ];
         
         return api.sendButton(msg.toLowerCase(), btns, id);
