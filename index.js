@@ -4,14 +4,64 @@ const parser = require('body-parser');
 const express = require('express');
 const path = require('path');
 const fs = require('fs');
+const { execSync } = require('child_process');
 const db = require('./modules/core/database');
 const rateLimiter = require('./modules/middleware/rateLimit');
 const { validateInput, verifyWebhookSignature } = require('./modules/middleware/validation');
 const CacheManager = require('./modules/core/cache');
 const config = require('./config/config.json');
 const CONSTANTS = require('./config/constants');
-const { loadCommands } = require('./modules/core/loader');
 const Queue = require('./modules/core/queue');
+
+function autoInstall(moduleName) {
+    try {
+        execSync(`npm install ${moduleName}`, { stdio: 'inherit' });
+        return true;
+    } catch (e) {
+        return false;
+    }
+}
+
+function safeRequire(filePath) {
+    try {
+        return require(filePath);
+    } catch (err) {
+        const match = err.message.match(/Cannot find module '(.+?)'/);
+        if (match) {
+            const pkg = match[1];
+            if (!pkg.startsWith('.') && !pkg.startsWith('/')) {
+                if (autoInstall(pkg)) return require(filePath);
+            }
+        }
+        throw err;
+    }
+}
+
+function loadCommands(dir) {
+    if (!fs.existsSync(dir)) return;
+    const files = fs.readdirSync(dir);
+    for (const file of files) {
+        const filePath = path.join(dir, file);
+        if (fs.statSync(filePath).isDirectory()) {
+            loadCommands(filePath);
+            continue;
+        }
+        if (!file.endsWith('.js')) continue;
+        try {
+            delete require.cache[require.resolve(filePath)];
+            const cmd = safeRequire(filePath);
+            if (cmd.config?.name) {
+                const name = cmd.config.name.toLowerCase();
+                global.client.commands.set(name, cmd);
+                if (cmd.config.aliases) {
+                    cmd.config.aliases.forEach(a => global.client.aliases.set(a.toLowerCase(), name));
+                }
+            }
+        } catch (e) {
+            console.error(e.message);
+        }
+    }
+}
 
 const app = express();
 app.set('trust proxy', 1);
@@ -29,7 +79,6 @@ global.MONITOR_MODE = false;
 global.sessions = new CacheManager(CONSTANTS.MAX_SESSIONS, CONSTANTS.ONE_HOUR);
 global.userCache = new CacheManager(CONSTANTS.MAX_CACHE_SIZE, CONSTANTS.ONE_DAY);
 global.messageCache = new CacheManager(CONSTANTS.MAX_CACHE_SIZE, CONSTANTS.SIX_HOURS);
-
 global.apiQueue = new Queue(2, 300);
 
 if (!fs.existsSync(global.CACHE_PATH)) {
