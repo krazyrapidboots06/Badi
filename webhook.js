@@ -14,6 +14,14 @@ if (fs.existsSync(srcPath)) {
     });
 }
 
+if (!global.api) {
+    global.api = {};
+    const dummyEvent = { sender: { id: null } };
+    for (const key in tools) {
+        global.api[key] = tools[key](dummyEvent);
+    }
+}
+
 module.exports.listen = (event) => {
     if (!event || event.object !== 'page' || !event.entry) return;
 
@@ -52,7 +60,6 @@ module.exports.listen = (event) => {
             for (const key in tools) {
                 api[key] = tools[key](ev);
             }
-            global.api = api;
 
             try {
                 await handler(ev, api);
