@@ -10,12 +10,14 @@ const { validateInput, verifyWebhookSignature } = require('./modules/middleware/
 const CacheManager = require('./modules/core/cache');
 const config = require('./config/config.json');
 const CONSTANTS = require('./config/constants');
+const { loadCommands } = require('./modules/core/loader');
+const Queue = require('./modules/core/queue');
 
 const app = express();
 app.set('trust proxy', 1);
 
 global.PAGE_ACCESS_TOKEN = process.env.PAGE_ACCESS_TOKEN || config.PAGE_ACCESS_TOKEN;
-global.ADMINS = new Set(process.env.ADMINS ? process.env.ADMINS.split(',').filter(Boolean) : (config.ADMINS || []));
+global.ADMINS = new Set(process.env.ADMINS ? process.env.ADMINS.split(',').filter(Boolean) : (config.ADMINS ||[]));
 global.PREFIX = "";
 global.BOT_NAME = process.env.BOT_NAME || config.BOT_NAME || 'Amdusbot';
 global.CACHE_PATH = path.join(__dirname, 'cache');
@@ -28,41 +30,17 @@ global.sessions = new CacheManager(CONSTANTS.MAX_SESSIONS, CONSTANTS.ONE_HOUR);
 global.userCache = new CacheManager(CONSTANTS.MAX_CACHE_SIZE, CONSTANTS.ONE_DAY);
 global.messageCache = new CacheManager(CONSTANTS.MAX_CACHE_SIZE, CONSTANTS.SIX_HOURS);
 
+global.apiQueue = new Queue(2, 300);
+
 if (!fs.existsSync(global.CACHE_PATH)) {
     fs.mkdirSync(global.CACHE_PATH, { recursive: true });
-}
-
-function loadCommands(dir) {
-    if (!fs.existsSync(dir)) return;
-    const files = fs.readdirSync(dir);
-    for (const file of files) {
-        const filePath = path.join(dir, file);
-        if (fs.statSync(filePath).isDirectory()) {
-            loadCommands(filePath);
-            continue;
-        }
-        if (!file.endsWith('.js')) continue;
-        try {
-            delete require.cache[require.resolve(filePath)];
-            const cmd = require(filePath);
-            if (cmd.config?.name) {
-                const name = cmd.config.name.toLowerCase();
-                global.client.commands.set(name, cmd);
-                if (cmd.config.aliases) {
-                    cmd.config.aliases.forEach(a => global.client.aliases.set(a.toLowerCase(), name));
-                }
-            }
-        } catch (e) {
-            console.error(e.message);
-        }
-    }
 }
 
 (async () => {
     await new Promise(resolve => db.loadBansIntoMemory(banSet => { global.BANNED_USERS = banSet; resolve(); }));
     
     const savedDisabled = await db.getSetting("disabled_cmds");
-    global.disabledCommands = new Set(savedDisabled || []);
+    global.disabledCommands = new Set(savedDisabled ||[]);
 
     loadCommands(path.join(__dirname, 'modules/commands'));
     
