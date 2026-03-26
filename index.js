@@ -17,7 +17,7 @@ const app = express();
 app.set('trust proxy', 1);
 
 global.PAGE_ACCESS_TOKEN = process.env.PAGE_ACCESS_TOKEN || config.PAGE_ACCESS_TOKEN;
-global.ADMINS = new Set(process.env.ADMINS ? process.env.ADMINS.split(',').filter(Boolean) : (config.ADMINS ||[]));
+global.ADMINS = new Set(process.env.ADMINS ? process.env.ADMINS.split(',').filter(Boolean) : (config.ADMINS || []));
 global.PREFIX = "";
 global.BOT_NAME = process.env.BOT_NAME || config.BOT_NAME || 'Amdusbot';
 global.CACHE_PATH = path.join(__dirname, 'cache');
@@ -40,11 +40,15 @@ if (!fs.existsSync(global.CACHE_PATH)) {
     await new Promise(resolve => db.loadBansIntoMemory(banSet => { global.BANNED_USERS = banSet; resolve(); }));
     
     const savedDisabled = await db.getSetting("disabled_cmds");
-    global.disabledCommands = new Set(savedDisabled ||[]);
+    global.disabledCommands = new Set(savedDisabled || []);
 
     loadCommands(path.join(__dirname, 'modules/commands'));
     
-    app.use(parser.json({ limit: '50mb' }));
+    app.use(parser.json({ 
+        limit: '50mb',
+        verify: (req, res, buf) => { req.rawBody = buf; }
+    }));
+    
     app.use(validateInput);
     app.use(rateLimiter);
     
