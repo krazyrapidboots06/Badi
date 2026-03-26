@@ -1,21 +1,19 @@
 const axios = require("axios");
 const FormData = require("form-data");
 const fs = require("fs");
-// UPDATED PATH: Points to config/config.json
-const { API_VERSION } = require("../../config/config.json");
+
+const API_VERSION = process.env.API_VERSION || "v21.0";
 
 module.exports = function (event) {
   return async function sendAttachment(type, source, senderID) {
     const recipientID = senderID || event.sender.id;
     const accessToken = global.PAGE_ACCESS_TOKEN;
     
-    // Auto-detect type if generic "file" is passed but extension is known image
     if (typeof source === "string" && type === "file") {
         if (source.match(/\.(jpg|jpeg|png|gif|webp)$/i)) type = "image";
     }
 
     try {
-      // CASE 1: URL (Simplest, O(1))
       if (typeof source === 'string' && source.startsWith('http')) {
         await axios.post(`https://graph.facebook.com/${API_VERSION}/me/messages?access_token=${accessToken}`, {
           recipient: { id: recipientID },
@@ -27,7 +25,6 @@ module.exports = function (event) {
           }
         });
       } 
-      // CASE 2: Local File (Stream)
       else {
         const form = new FormData();
         form.append("recipient", JSON.stringify({ id: recipientID }));
@@ -38,7 +35,6 @@ module.exports = function (event) {
             } 
         }));
         
-        // Create stream from path
         if (typeof source === "string" && fs.existsSync(source)) {
             form.append("filedata", fs.createReadStream(source));
         } else {
