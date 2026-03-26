@@ -14,7 +14,13 @@ const processedMids = new Set();
 const userLock = new Set();
 const BAN_TIERS = { 1: 10800000, 2: 259200000, 3: null };
 
-setInterval(() => processedMids.clear(), 60000);
+setInterval(() => {
+    processedMids.clear();
+    const now = Date.now();
+    for (const [uid, time] of lastRequests.entries()) {
+        if (now - time > 120000) lastRequests.delete(uid);
+    }
+}, 60000);
 
 async function executeAction(action, event, api, reply) {
     const cmdName = action.tool?.toLowerCase();
@@ -104,13 +110,13 @@ module.exports.run = async function ({ event, args, api, reply }) {
     if (!query && ctx.length === 0) {
         userLock.delete(uid);
         if (api.sendTypingIndicator) api.sendTypingIndicator(false, uid);
-        return reply("🧠 **amdus ai guide**\n━━━━━━━━━━━━━━━━\nhow to use:\n  • type your message directly\n  • reply to any image, video, or doc with a question\n  • type 'amdus reset' to start a new session\n\ncapabilities:\n  • vision: analyze photos and short videos\n  • files: read/write pdf, docx, and pptx\n  • search: real-time web access\n  • creation: generate images and documents");
+        return reply("🧠 **amdus ai guide**\n━━━━━━━━━━━━━━━━\nhow to use:\n  • type your message directly\n  • reply to any image or file with a question\n  • type 'amdus reset' to start a new session\n\n📸 **vision & files**:\n  • reply to an image with: 'what is this?'\n  •  or use other models with image vision: 'gemini what is this?' (reply to image)\n\ncapabilities:\n  • vision: analyze photos and short videos\n  • files: read/write pdf, docx, and pptx\n  • search: real-time web access");
     }
 
     if (ctx.length > 0 && !query) {
         userLock.delete(uid);
         if (api.sendTypingIndicator) api.sendTypingIndicator(false, uid);
-        return reply("📂 **media received**\n━━━━━━━━━━━━━━━━\ni see the file. now, just reply to it with your question.\n\nexamples:\n  • 'summarize this document'\n  • 'what is in this photo?'\n  • 'convert this to a text file'");
+        return reply("📂 **media received**\n━━━━━━━━━━━━━━━━\ni see the file! now, reply to it with your question.\n\nexamples:\n  • 'summarize this document'\n  • 'what is in this photo?'\n  • 'gemini explain this image' (for vision models)");
     }
 
     if (api.sendTypingIndicator) api.sendTypingIndicator(true, uid);
