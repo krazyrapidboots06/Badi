@@ -1,64 +1,45 @@
 const axios = require('axios');
 const https = require('https');
 const CONSTANTS = require('../../config/constants');
+const CacheManager = require('../core/cache');
 
-const requestCache = new Map();
-
-// cleanup cache every 5 minutes
-setInterval(() => {
-    const now = Date.now();
-    for (const [key, value] of requestCache.entries()) {
-        if (now - value.timestamp > CONSTANTS.ONE_HOUR) {
-            requestCache.delete(key);
-        }
-    }
-}, CONSTANTS.CLEANUP_INTERVAL || 300000);
-
-// By default we verify TLS
-const rejectUnauthorized = process.env.ALLOW_INSECURE_TLS ? false : true;
+const requestCache = new CacheManager(500, CONSTANTS.ONE_HOUR);
 
 const http = axios.create({
-    timeout: 60000,
+    timeout: 30000,
     httpsAgent: new https.Agent({ 
         keepAlive: true, 
-        rejectUnauthorized: rejectUnauthorized 
+        rejectUnauthorized: true 
     }),
     headers: { 'User-Agent': 'Amduspage/Bot' },
     maxRedirects: 3,
-    maxContentLength: 50 * 1024 * 1024,
+    maxContentLength: 25 * 1024 * 1024,
     validateStatus: status => status < 500
 });
 
-// retry interceptor
 http.interceptors.response.use(
     response => response,
     async error => {
-        const config = error.config || {};
+        const config = error.config;
+        if (!config || !config.retry) config.retry = 0;
         
-        config.retry = config.retry || 0;
-        config.retry += 1;
-        
-        if (config.retry <= (CONSTANTS.MAX_RETRIES || 3) && error.response?.status >= 500) {
-            await new Promise(r => setTimeout(r, (CONSTANTS.RETRY_DELAY || 1000) * config.retry));
+        if (config.retry < (CONSTANTS.MAX_RETRIES || 3) && (error.code === 'ECONNABORTED' || error.response?.status >= 500)) {
+            config.retry++;
+            const delay = (CONSTANTS.RETRY_DELAY || 1500) * config.retry;
+            await new Promise(r => setTimeout(r, delay));
             return http(config);
         }
-        
         return Promise.reject(error);
     }
 );
 
 async function cachedRequest(url, options = {}, cacheTime = 60000) {
     const key = `${url}:${JSON.stringify(options)}`;
-    
-    if (requestCache.has(key)) {
-        const cached = requestCache.get(key);
-        if (Date.now() - cached.timestamp < cacheTime) {
-            return cached.response;
-        }
-    }
+    const cached = requestCache.get(key);
+    if (cached) return cached;
     
     const response = await http(url, options);
-    requestCache.set(key, { response, timestamp: Date.now() });
+    requestCache.set(key, response);
     
     return response;
 }
