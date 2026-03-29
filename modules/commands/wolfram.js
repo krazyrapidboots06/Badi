@@ -15,7 +15,7 @@ module.exports.run = async function ({ event, args, api, reply }) {
     const input = args.join(" ");
     
     if (!input) {
-        return reply("🧮 **wolfram alpha**\n━━━━━━━━━━━━━━━━\nhow to use:\n  wolfram <query>\n\nexample:\n  wolfram derivative of x^2");
+        return reply("🧮 **wolfram alpha guide**\n━━━━━━━━━━━━━━━━\nhow to use:\n  wolfram <query>\n\nexample:\n  wolfram derivative of x^2\n  wolfram distance to moon");
     }
 
     if (api.sendTypingIndicator) api.sendTypingIndicator(true, id);
@@ -45,9 +45,12 @@ module.exports.run = async function ({ event, args, api, reply }) {
         await api.sendMessage(output.toLowerCase(), id);
 
         const images = data.pods.flatMap(p => p.subpods).map(s => s.img?.src).filter(Boolean);
-        for (const img of images.slice(0, 3)) {
-            await api.sendAttachment("image", img, id).catch(() => {});
-        }
+        
+        images.slice(0, 3).forEach((img, index) => {
+            setTimeout(() => {
+                api.sendAttachment("image", img, id);
+            }, (index + 1) * 1500);
+        });
 
     } catch (e) {
         reply("wolfram service is offline.");
