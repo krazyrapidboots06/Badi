@@ -16,6 +16,7 @@
     "fs-extra": "^11.2.0",
     "gradient-string": "^2.0.0",
     "mongoose": "^8.9.2",
+    "openai": "^4.52.7",
     "sqlite3": "^5.1.6"
   },
   "engines": {
