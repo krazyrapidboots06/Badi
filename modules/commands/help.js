@@ -17,7 +17,22 @@ module.exports.run = async ({ event, args, reply }) => {
     const cmd = global.client.commands.get(input) || global.client.commands.get(global.client.aliases.get(input));
     if (cmd) {
         if (cmd.config.adminOnly && !isAdmin) return; 
-        return reply(`📌 **${cmd.config.name}**\n${cmd.config.description || 'no description provided.'}`.toLowerCase());
+        
+        let tutorial = "";
+        const cat = cmd.config.category?.toLowerCase();
+        if (cat === "ai") {
+            tutorial = `\n\n📖 **tutorial**\nusage: ${cmd.config.name} <query>\n  • reply to an image with: '${cmd.config.name} what is this?'\n  • for vision models: ${cmd.config.name} <query> (reply to image)`;
+        } else if (cat === "media") {
+            tutorial = `\n\n📖 **tutorial**\nusage: ${cmd.config.name} <query or url>`;
+        } else if (cat === "utility") {
+            tutorial = `\n\n📖 **tutorial**\nusage: ${cmd.config.name} <args>`;
+        } else if (cat === "admin") {
+            tutorial = `\n\n📖 **tutorial**\nusage: ${cmd.config.name} <args> (admin only)`;
+        } else {
+            tutorial = `\n\n📖 **tutorial**\nusage: ${cmd.config.name} <args>`;
+        }
+        
+        return reply(`📌 **${cmd.config.name}**\n${cmd.config.description || 'no description provided.'}${tutorial}`.toLowerCase());
     }
     return reply(`never heard of the command "${input}".`);
   }
@@ -43,6 +58,6 @@ module.exports.run = async ({ event, args, reply }) => {
       }
   });
   
-  msg += `type 'help <command>' for info or type '<command>' for tutorial guide on usage.`;
+  msg += `type 'help <command>' for info and tutorial.`;
   return reply(msg.toLowerCase());
 };

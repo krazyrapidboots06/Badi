@@ -24,6 +24,7 @@ module.exports.config = {
   author: "sethdico",
   version: "4.1",
   category: "Utility",
+  description: "translate text to different languages",
   adminOnly: false,
   usePrefix: false,
   cooldown: 2,

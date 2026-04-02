@@ -4,6 +4,7 @@ module.exports.config = {
     name: "cmd",
     author: "sethdico",
     category: "Admin",
+    description: "manage command status",
     adminOnly: true,
     usePrefix: false
 };

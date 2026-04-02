@@ -5,6 +5,7 @@ module.exports.config = {
     aliases: ["unban"],
     author: "sethdico",
     category: "Admin",
+    description: "ban or unban users",
     adminOnly: true,
     usePrefix: false,
     cooldown: 0

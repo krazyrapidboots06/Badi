@@ -74,7 +74,8 @@ module.exports = async function (event, api) {
             await command.run({ event, args, api, reply });
             return;
         } catch (e) { 
-            return reply("error."); 
+            console.error(`Command error (${command.config.name}):`, e.message);
+            return reply("something went wrong with that command. try again in a sec."); 
         }
     } 
 

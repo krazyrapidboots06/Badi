@@ -1,4 +1,4 @@
-const axios = require("axios");
+const { http } = require("../utils");
 
 module.exports.config = {
     name: "lyrics",

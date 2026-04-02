@@ -1,4 +1,4 @@
-const axios = require("axios");
+const { http } = require("../utils");
 
 module.exports.config = {
     name: "alldl",
@@ -29,7 +29,7 @@ module.exports.run = async function ({ event, args, api, reply }) {
     if (api.sendTypingIndicator) api.sendTypingIndicator(true, event.sender.id);
 
     try {
-        const res = await axios.get("https://api-library-kohi.onrender.com/api/alldl", {
+        const res = await http.get("https://api-library-kohi.onrender.com/api/alldl", {
             params: { url: url }
         });
 
