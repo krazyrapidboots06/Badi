@@ -1,0 +1,26 @@
+# Dependencies
+node_modules/
+
+# Secrets and Configs
+.env
+config.json
+.vscode/
+
+# Root Cache (Ignore all temp files, but keep the folder alive via .gitkeep)
+cache/*
+!cache/.gitkeep
+
+# SQLite Databases (Crucial: Prevents user data from being uploaded)
+*.db
+*.db-journal
+*.db-shm
+*.db-wal
+
+# Legacy JSON Data (Files from the old version)
+modules/scripts/commands/cache/
+modules/scripts/commands/banned.json
+reminders.json
+
+# OS Junk
+.DS_Store
+Thumbs.db
