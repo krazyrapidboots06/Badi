@@ -23,13 +23,13 @@ module.exports.run = async function ({ event, args, api, reply }) {
         if (!content.includes("|")) return reply("wrong format. use: sim teach question | answer");
         
         const [ask, ans] = content.split("|").map(s => s.trim());
-        if (!ask || !ans) return reply("provide both a question and an answer.");
+        if (!ask || !ans) return reply("provide both a question and an answer");
 
         try {
             await http.get("https://simsimi.ooguy.com/teach", { params: { ask, ans, apikey: apiKey } });
-            return reply(`learned it. if u say "${ask}", i'll say "${ans}".`);
+            return reply(`learned it. if u say "${ask}", i'll say "${ans}"`);
         } catch (e) {
-            return reply("couldn't learn that right now.");
+            return reply("couldn't learn that right now");
         }
     }
 
@@ -43,7 +43,7 @@ module.exports.run = async function ({ event, args, api, reply }) {
         const response = res.data.respond || "idk what to say to that.";
         reply(response.toLowerCase());
     } catch (e) {
-        reply("simsimi is sleeping.");
+        reply("simsimi is sleeping");
     } finally {
         if (api.sendTypingIndicator) api.sendTypingIndicator(false, id);
     }

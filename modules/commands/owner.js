@@ -9,10 +9,11 @@ module.exports.config = {
     cooldown: 5,
 };
 
-module.exports.run = async function ({ event, api }) {
+module.exports.run = async function ({ event, api, args }) {
   const id = event.sender.id;
   const gif = "https://media1.tenor.com/m/Mq6ZeawKT1MAAAAd/nazo-no-kanojo-x-nazo-no-kanojo.gif";
-  const msg = "i'm seth asher and i made this bot. check my links if u want to talk.";
+  const reason = args.slice(1).join(" ") || "working on some stuff, be back soon";
+  const msg = "i'm seth asher and i made this bot. check my links if u want to talk";
 
   const buttons = [
     { type: "web_url", url: "https://www.facebook.com/s8tsh.3r", title: "facebook" },

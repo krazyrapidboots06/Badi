@@ -34,11 +34,11 @@ module.exports.run = async function ({ event, args, api, reply }) {
         if (answer) {
             await api.sendMessage(`🎭 **venice ai**\n\n${answer}`.toLowerCase(), senderID);
         } else {
-            reply("couldn't get a response from venice.");
+            reply("couldn't get a response from venice");
         }
 
     } catch (e) {
-        reply("venice is currently unavailable.");
+        reply("venice is currently unavailable");
     } finally {
         if (api.sendTypingIndicator) api.sendTypingIndicator(false, senderID);
     }

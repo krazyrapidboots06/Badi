@@ -49,6 +49,6 @@ module.exports.run = async function ({ reply }) {
 
         reply(msg.toLowerCase());
     } catch (e) {
-        reply("failed to load stats. something broke.");
+        reply("failed to load stats. something broke");
     }
 };

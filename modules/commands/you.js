@@ -28,11 +28,11 @@ module.exports.run = async function ({ event, args, api, reply }) {
         });
         
         const answer = res.data.message || res.data.response;
-        if (!answer) return reply("no response.");
+        if (!answer) return reply("no response");
         
         await api.sendMessage(`🔍 **you.com**\n\n${answer}`, senderID);
     } catch (e) { 
-        reply("you.com is acting up."); 
+        reply("you.com is acting up"); 
     } finally {
         if (api.sendTypingIndicator) api.sendTypingIndicator(false, senderID);
     }

@@ -15,7 +15,7 @@ module.exports.run = async function ({ event, args, api, reply }) {
     const senderID = event.sender.id;
     const apiKey = process.env.NASA_API_KEY;
 
-    if (!apiKey) return reply("nasa api key is missing.");
+    if (!apiKey) return reply("nasa api key is missing");
 
     if (!args[0]) {
         return reply("🚀 **nasa apod**\n━━━━━━━━━━━━━━━━\nhow to use:\n  nasa - today's photo\n  nasa random - random photo\n\nexample:\n  nasa random");
@@ -44,7 +44,7 @@ module.exports.run = async function ({ event, args, api, reply }) {
         await api.sendButton(msg.toLowerCase(), btns, senderID);
 
     } catch (e) {
-        reply("nasa api is sleeping.");
+        reply("nasa api is sleeping");
     } finally {
         if (api.sendTypingIndicator) api.sendTypingIndicator(false, senderID);
     }

@@ -27,12 +27,12 @@ module.exports.run = async function ({ event, args, api, reply }) {
 
         const answer = res.data.data;
         
-        if (!answer) return reply("my brain is empty.");
+        if (!answer) return reply("my brain is empty");
 
         await api.sendMessage(`🧠 **perplexity reasoning**\n\n${answer}`.toLowerCase(), senderID);
 
     } catch (e) {
-        reply("perplexity is offline or busy.");
+        reply("perplexity is offline or busy");
     } finally {
         if (api.sendTypingIndicator) api.sendTypingIndicator(false, senderID);
     }

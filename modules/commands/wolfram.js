@@ -33,14 +33,14 @@ module.exports.run = async function ({ event, args, api, reply }) {
 
         const data = res.data.queryresult;
         
-        if (!data.success || data.error) return reply("wolfram couldn't calculate that.");
+        if (!data.success || data.error) return reply("wolfram couldn't calculate that");
 
         const output = data.pods.map(pod => {
             const text = pod.subpods.map(s => s.plaintext).filter(Boolean).join("\n");
             return text ? `📌 **${pod.title}**\n${text}` : "";
         }).filter(Boolean).join("\n\n");
 
-        if (!output) return reply("no clear results found.");
+        if (!output) return reply("no clear results found");
 
         await api.sendMessage(output.toLowerCase(), id);
 
@@ -53,7 +53,7 @@ module.exports.run = async function ({ event, args, api, reply }) {
         });
 
     } catch (e) {
-        reply("wolfram service is offline.");
+        reply("wolfram service is offline");
     } finally {
         if (api.sendTypingIndicator) api.sendTypingIndicator(false, id);
     }

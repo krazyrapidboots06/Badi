@@ -21,7 +21,7 @@ module.exports.run = async function ({ event, args, api, reply }) {
     if (api.sendTypingIndicator) api.sendTypingIndicator(true, uid);
 
     try {
-        reply("generating... this might take a sec.");
+        reply("generating... this might take a sec");
 
         const res = await http.get("https://api-library-kohi.onrender.com/api/opendalle", {
             params: { prompt: prompt }
@@ -32,11 +32,11 @@ module.exports.run = async function ({ event, args, api, reply }) {
         if (image) {
             await api.sendAttachment("image", image, uid);
         } else {
-            reply("failed to generate. try a different prompt.");
+            reply("failed to generate. try a different prompt");
         }
 
     } catch (e) {
-        reply("api is sleeping or having issues.");
+        reply("api is sleeping or having issues");
     } finally {
         if (api.sendTypingIndicator) api.sendTypingIndicator(false, uid);
     }

@@ -18,7 +18,7 @@ module.exports.run = async function ({ args, api, reply, event }) {
             headers: { "Authorization": `Bearer ${process.env.CHIPP_API_KEY}` }
         });
 
-        if (!res.data.messages?.length) return reply("empty transcript.");
+        if (!res.data.messages?.length) return reply("empty transcript");
 
         let report = `📜 Chat Log\n━━━━\n`;
         res.data.messages.slice(-20).forEach(m => {

@@ -12,7 +12,7 @@ module.exports.config = {
 
 module.exports.run = async function ({ args, reply }) {
     const action = args[0]?.toLowerCase();
-    const reason = args.slice(1).join(" ") || "working on some stuff, be back soon.";
+    const reason = args.slice(1).join(" ") || "working on some stuff, be back soon";
 
     if (action === "on") {
         global.MAINTENANCE_MODE = true;
@@ -25,7 +25,7 @@ module.exports.run = async function ({ args, reply }) {
     if (action === "off") {
         global.MAINTENANCE_MODE = false;
         await db.setSetting("maintenance", "false");
-        return reply("✅ bot is back online.");
+        return reply("✅ bot is back online");
     }
 
     reply(`status: ${global.MAINTENANCE_MODE ? "ON" : "OFF"}\nreason: ${global.MAINTENANCE_REASON}`);

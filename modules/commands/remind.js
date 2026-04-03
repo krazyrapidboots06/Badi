@@ -42,7 +42,7 @@ module.exports.run = async function ({ event, args, api, reply }) {
     if (args[0] === "list") {
         const list = await new Promise(resolve => db.getActiveReminders(resolve));
         const userList = list.filter(r => r.userId === senderID);
-        if (!userList.length) return reply("you have no active reminders.");
+        if (!userList.length) return reply("you have no active reminders");
         
         let msg = "📅 **your reminders**\n\n";
         userList.forEach((r, i) => { msg += `${i + 1}. ${r.message}\n`; });
@@ -58,18 +58,18 @@ module.exports.run = async function ({ event, args, api, reply }) {
         
         if (toCancel) {
             await db.deleteReminder(toCancel.id);
-            return reply("reminder cancelled.");
+            return reply("reminder cancelled");
         }
-        return reply("couldn't find that reminder.");
+        return reply("couldn't find that reminder");
     }
 
     const match = input.match(/^(\d+)([smhd])\s+(.+)$/);
-    if (!match) return reply("invalid format. type just 'remind' to see the guide.");
+    if (!match) return reply("invalid format. type just 'remind' to see the guide");
     
     const units = { s: 1000, m: 60000, h: 3600000, d: 86400000 };
     const delay = parseInt(match[1]) * units[match[2]];
 
-    if (delay > 2147483647) return reply("too far ahead. max is 24 days.");
+    if (delay > 2147483647) return reply("too far ahead. max is 24 days");
 
     const reminder = {
         id: crypto.randomBytes(8).toString('hex'),

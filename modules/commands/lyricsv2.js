@@ -26,10 +26,10 @@ module.exports.run = async function ({ event, args, api, reply }) {
         });
 
         const list = res.data.data;
-        if (!list || !list.length) return reply("couldn't find those lyrics.");
+        if (!list || !list.length) return reply("couldn't find those lyrics");
 
         const song = list[0];
-        if (!song.plainLyrics) return reply("lyrics are unavailable for this one.");
+        if (!song.plainLyrics) return reply("lyrics are unavailable for this one");
 
         const result = `🎵 ${song.trackName}\n🎤 ${song.artistName}\n\n${song.plainLyrics}`;
         await api.sendMessage(result.toLowerCase(), senderID);

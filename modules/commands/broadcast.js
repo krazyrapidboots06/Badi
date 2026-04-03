@@ -21,7 +21,7 @@ module.exports.run = async function ({ event, args, api, reply }) {
         const users = await db.getAllUsers();
         const recipients = users.filter(u => u.userId !== event.sender.id);
 
-        if (!recipients.length) return reply("no users found to reach.");
+        if (!recipients.length) return reply("no users found to reach");
 
         reply(`📢 starting broadcast to ${recipients.length} users. processing in background...`);
 
@@ -45,6 +45,6 @@ module.exports.run = async function ({ event, args, api, reply }) {
 
     } catch (e) {
         console.error('Broadcast error:', e.message);
-        reply("broadcast failed to start."); 
+        reply("broadcast failed to start"); 
     }
 };

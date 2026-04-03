@@ -15,8 +15,8 @@ module.exports.run = async function ({ args, api, reply }) {
     
     try {
         await api.sendMessage(`message from dev:\n\n${msg}`, id);
-        reply(`sent to ${id}.`);
+        reply(`sent to ${id}`);
     } catch (e) { 
-        reply(`couldn't send it. check the id.`); 
+        reply("couldn't send it. check the id"); 
     }
 };

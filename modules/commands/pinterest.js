@@ -39,7 +39,7 @@ module.exports.run = async function ({ event, args, api, reply }) {
         const images = res.data.data;
 
         if (!images || !images.length) {
-            return reply("couldn't find any images for that search.");
+            return reply("couldn't find any images for that search");
         }
 
         reply(`📷 found ${Math.min(images.length, count)} images. sending them now...`);
@@ -51,6 +51,6 @@ module.exports.run = async function ({ event, args, api, reply }) {
         });
 
     } catch (e) {
-        reply("pinterest service is currently unavailable.");
+        reply("pinterest service is currently unavailable");
     }
 };

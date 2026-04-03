@@ -42,7 +42,7 @@ module.exports.run = async function ({ event, args, api, reply }) {
         await api.sendMessage(msg, senderID);
 
     } catch (e) {
-        reply("couldn't find that pokemon.");
+        reply("couldn't find that pokemon");
     } finally {
         if (api.sendTypingIndicator) api.sendTypingIndicator(false, senderID);
     }
