@@ -9,7 +9,7 @@ const loadReminders = () => {
                 setTimeout(async () => {
                     if (!global.api) return;
                     try {
-                        await global.api.sendMessage(`⏰ **reminder**\n\n"${r.message}"`, r.userId);
+                        await global.api.sendMessage(`reminder\n\n"${r.message}"`, r.userId);
                         await db.deleteReminder(r.id);
                     } catch (e) {
                         console.error(`Failed to send reminder to ${r.userId}:`, e.message);
@@ -25,7 +25,7 @@ module.exports.config = {
     author: "sethdico",
     version: "2.9",
     category: "Utility",
-    description: "set reminders for yourself",
+    description: "set timed reminders for any message or task",
     adminOnly: false,
     usePrefix: false,
     cooldown: 3
@@ -36,7 +36,7 @@ module.exports.run = async function ({ event, args, api, reply }) {
     const input = args.join(" ");
 
     if (!input) {
-        return reply("⏰ **reminders**\n━━━━━━━━━━━━━━━━\nhow to use:\n  remind <time> <msg>\n  remind list\n  remind cancel <number>\n\nexamples:\n  remind 10m check oven\n  remind 2h sleep\n  remind 1d touch grass");
+        return reply("reminders\n\nusage:\nremind <time> <msg>\nremind list\nremind cancel <number>\n\nexamples:\nremind 10m check oven\nremind 2h sleep\nremind 1d touch grass");
     }
 
     if (args[0] === "list") {
@@ -44,7 +44,7 @@ module.exports.run = async function ({ event, args, api, reply }) {
         const userList = list.filter(r => r.userId === senderID);
         if (!userList.length) return reply("you have no active reminders");
         
-        let msg = "📅 **your reminders**\n\n";
+        let msg = "your reminders\n\n";
         userList.forEach((r, i) => { msg += `${i + 1}. ${r.message}\n`; });
         return reply(msg.toLowerCase());
     }
@@ -82,7 +82,7 @@ module.exports.run = async function ({ event, args, api, reply }) {
     
     setTimeout(async () => {
         if (api) {
-            api.sendMessage(`⏰ **reminder**\n\n"${reminder.message}"`, senderID);
+            api.sendMessage(`reminder\n\n"${reminder.message}"`, senderID);
             await db.deleteReminder(reminder.id);
         }
     }, delay);

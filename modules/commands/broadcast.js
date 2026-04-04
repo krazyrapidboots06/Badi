@@ -4,7 +4,7 @@ module.exports.config = {
     name: "broadcast",
     author: "sethdico",
     category: "Admin",
-    description: "send an announcement to everyone.",
+    description: "send announcement to all users",
     adminOnly: true,
     usePrefix: false,
     cooldown: 15
@@ -14,23 +14,23 @@ module.exports.run = async function ({ event, args, api, reply }) {
     const msg = args.join(" ");
 
     if (!msg) {
-        return reply("📢 **broadcast guide**\n━━━━━━━━━━━━━━━━\nhow to use:\n  broadcast <message>\n\nexample:\n  broadcast we have updated the ai memory system!");
+        return reply("broadcast\n\nusage:\nbroadcast <message>\n\nexample:\nbroadcast system maintenance in 10 minutes");
     }
 
     try {
         const users = await db.getAllUsers();
         const recipients = users.filter(u => u.userId !== event.sender.id);
 
-        if (!recipients.length) return reply("no users found to reach");
+        if (!recipients.length) return reply("no users found");
 
-        reply(`📢 starting broadcast to ${recipients.length} users. processing in background...`);
+        reply(`broadcasting to ${recipients.length} users...`);
 
         (async () => {
             let sent = 0;
             let failed = 0;
             for (let i = 0; i < recipients.length; i++) {
                 try {
-                    await api.sendMessage(`📢 announcement\n\n${msg}`, recipients[i].userId);
+                    await api.sendMessage(`announcement\n\n${msg}`, recipients[i].userId);
                     sent++;
                 } catch (e) {
                     failed++;

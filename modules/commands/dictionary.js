@@ -5,7 +5,7 @@ module.exports.config = {
     aliases: ["dictionary", "define"],
     author: "sethdico",
     category: "Utility",
-    description: "search for word definitions and slang.",
+    description: "find word definitions, meanings, and slang terms",
     adminOnly: false,
     usePrefix: false,
     cooldown: 3,
@@ -17,7 +17,7 @@ module.exports.run = async function ({ event, args, api, reply }) {
     const query = isSlang ? args.slice(1).join(" ") : args.join(" ");
 
     if (!query) {
-        return reply("📖 **dictionary**\n━━━━━━━━━━━━━━━━\nhow to use:\n  dict <word>\n  dict slang <word>\n\nexamples:\n  dict serendipity\n  dict slang rizz");
+        return reply("dictionary\n\nusage:\ndict <word>\ndict slang <word>\n\nexamples:\ndict serendipity\ndict slang rizz");
     }
 
     if (api.sendTypingIndicator) api.sendTypingIndicator(true, senderID);
@@ -32,7 +32,7 @@ module.exports.run = async function ({ event, args, api, reply }) {
             const def = entry.definition.replace(/[\[\]]/g, "");
             const ex = entry.example.replace(/[\[\]]/g, "");
 
-            const msg = `🏙️ **${query}**\n\n${def}\n\nexample: ${ex}`;
+            const msg = `${query}\n\n${def}\n\nexample: ${ex}`;
             const btns =[{ type: "postback", title: "formal def", payload: `dict ${query}` }];
             return api.sendButton(msg.toLowerCase(), btns, senderID);
         } catch (e) {
@@ -57,8 +57,8 @@ module.exports.run = async function ({ event, args, api, reply }) {
             const type = entry.fl || ""; 
             const pronunciation = entry.hwi?.prs?.[0]?.mw || ""; 
 
-            let msg = `📖 **${entry.hwi?.hw?.replace(/\*/g, "") || query}** ${type ? `(${type})` : ''}\n`;
-            if (pronunciation) msg += `/${pronunciation}/\n`;
+            let msg = `${entry.hwi?.hw?.replace(/\*/g, "") || query} ${type ? `(${type})` : ''}`;
+            if (pronunciation) msg += `/${pronunciation}/`;
             msg += `\n• ${def}`;
 
             const btns =[{ type: "postback", title: "slang def", payload: `dict slang ${query}` }];
@@ -88,7 +88,7 @@ module.exports.run = async function ({ event, args, api, reply }) {
         const phonetics = data.phonetics.find(p => p.text)?.text || "";
         const audioUrl = data.phonetics.find(p => p.audio)?.audio || "";
 
-        let msg = `📖 **${data.word}**`;
+        let msg = `${data.word}`;
         if (phonetics) msg += ` /${phonetics}/`;
         msg += `\n\n${def}`;
 

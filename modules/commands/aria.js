@@ -16,7 +16,7 @@ module.exports.run = async function ({ event, args, api, reply }) {
     const senderID = event.sender.id;
 
     if (!input) {
-        return reply("🤖 **aria ai**\n━━━━━━━━━━━━━━━━\nhow to use:\n  aria <message>\n\nexample:\n  aria write me a poem about the ocean");
+        return reply("aria ai\n\nusage:\naria <message>\n\nexample:\naria write me a poem about the ocean");
     }
 
     if (api.sendTypingIndicator) api.sendTypingIndicator(true, senderID);
@@ -30,7 +30,7 @@ module.exports.run = async function ({ event, args, api, reply }) {
         const result = parseAI(res);
         if (!result) return reply("aria didn't say anything.");
 
-        await api.sendMessage(`🤖 **aria**\n\n${result}`.toLowerCase(), senderID);
+        await api.sendMessage(`${result}`.toLowerCase(), senderID);
     } catch (e) {
         reply("aria is currently sleeping.");
     } finally {

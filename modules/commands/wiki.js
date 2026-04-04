@@ -4,7 +4,7 @@ module.exports.config = {
     name: "wiki",
     author: "sethdico",
     category: "Utility",
-    description: "wikipedia search and feeds",
+    description: "search Wikipedia articles and get daily summaries",
     adminOnly: false,
     usePrefix: false,
     cooldown: 5,
@@ -15,7 +15,7 @@ module.exports.run = async function ({ event, args, api, reply }) {
     const query = args.join(" ").trim().toLowerCase();
 
     if (!query) {
-        const msg = "📖 **wikipedia**\n━━━━━━━━━━━━━━━━\nhow to use:\n  wiki <search>\n  wiki today\n  wiki random\n  wiki featured\n  wiki news";
+        const msg = "wikipedia\n\nusage:\nwiki <search>\nwiki today\nwiki random\nwiki featured\nwiki news";
         const btns =[
             { type: "postback", title: "random", payload: "wiki random" },
             { type: "postback", title: "featured", payload: "wiki featured" },
@@ -36,7 +36,7 @@ module.exports.run = async function ({ event, args, api, reply }) {
             const res = await http.get(`https://en.wikipedia.org/api/rest_v1/feed/onthisday/selected/${mm}/${dd}`);
             const events = res.data.selected;
             const e = events[Math.floor(Math.random() * events.length)];
-            const msg = `🗓️ **today in history**\n\n${e.year}: ${e.text}`;
+            const msg = `today in history\n\n${e.year}: ${e.text}`;
             
             await api.sendButton(msg.toLowerCase(), [{ type: "postback", title: "another", payload: "wiki today" }], id);
             return;
@@ -49,7 +49,7 @@ module.exports.run = async function ({ event, args, api, reply }) {
             
             if (tfa.thumbnail?.source) await api.sendAttachment("image", tfa.thumbnail.source, id).catch(()=>{});
             
-            const msg = `🌟 **featured article**\n\n${tfa.title}\n\n${tfa.extract.substring(0, 300)}...`;
+            const msg = `featured article\n\n${tfa.title}\n\n${tfa.extract.substring(0, 300)}...`;
             await api.sendButton(msg.toLowerCase(),[{ type: "web_url", url: tfa.content_urls.desktop.page, title: "read more" }], id);
             return;
         }
@@ -60,7 +60,7 @@ module.exports.run = async function ({ event, args, api, reply }) {
             if (!news || !news.length) return reply("no news right now");
             
             const story = news[0];
-            const msg = `📰 **in the news**\n\n${story.story}`;
+            const msg = `in the news\n\n${story.story}`;
             const link = story.links?.[0]?.content_urls?.desktop?.page;
             
             if (link) {
@@ -76,7 +76,7 @@ module.exports.run = async function ({ event, args, api, reply }) {
             const data = res.data;
             if (data.originalimage?.source) await api.sendAttachment("image", data.originalimage.source, id).catch(()=>{});
             
-            await api.sendButton(`🎲 **${data.title}**\n\n${data.extract.substring(0, 300)}...`.toLowerCase(),[{ type: "web_url", url: data.content_urls.desktop.page, title: "read more" }], id);
+            await api.sendButton(`${data.title}\n\n${data.extract.substring(0, 300)}...`.toLowerCase(),[{ type: "web_url", url: data.content_urls.desktop.page, title: "read more" }], id);
             return;
         }
 
@@ -86,7 +86,7 @@ module.exports.run = async function ({ event, args, api, reply }) {
         if (data.type === "disambiguation") return reply("that's too broad, try being more specific");
         if (data.originalimage?.source) await api.sendAttachment("image", data.originalimage.source, id).catch(()=>{});
 
-        const msg = `🔍 **${data.title}**\n\n${data.extract.substring(0, 400)}...`;
+        const msg = `${data.title}\n\n${data.extract.substring(0, 400)}...`;
         const btns =[{ type: "web_url", url: data.content_urls.desktop.page, title: "full article" }];
 
         await api.sendButton(msg.toLowerCase(), btns, id);

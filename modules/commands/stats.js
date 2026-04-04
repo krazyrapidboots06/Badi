@@ -32,23 +32,27 @@ module.exports.run = async function ({ reply }) {
             ? topCmds.slice(0, 5).map((c, i) => `  ${i + 1}. ${c.command} (${c.count})`).join('\n') 
             : "  none yet";
 
-        const msg = `📊 system stats\n` +
-                    `━━━━━━━━━━━━━━━━\n` +
-                    `🤖 bot\n` +
-                    `  cmds: ${global.client.commands.size}\n` +
-                    `  sessions: ${global.sessions.size()}\n` +
-                    `  banned: ${global.BANNED_USERS.size}\n\n` +
-                    `👥 users\n` +
-                    `  total: ${totalUsers}\n` +
-                    `  active (24h): ${activeToday}\n\n` +
-                    `🔥 top commands\n${topList}\n\n` +
-                    `💻 system\n` +
-                    `  ram: ${(mem.rss / 1024 / 1024).toFixed(1)}mb\n` +
-                    `  uptime: ${upStr}\n` +
-                    `  os: ${os.platform()} ${os.arch()}`;
+        const msg = `system stats
+
+bot status
+  commands: ${global.client.commands.size}
+  sessions: ${global.sessions.size()}
+  banned: ${global.BANNED_USERS.size}
+
+user stats
+  total: ${totalUsers}
+  active (24h): ${activeToday}
+
+top commands
+${topList}
+
+system info
+  ram: ${(mem.rss / 1024 / 1024).toFixed(1)}mb
+  uptime: ${upStr}
+  os: ${os.platform()} ${os.arch()}`;
 
         reply(msg.toLowerCase());
     } catch (e) {
-        reply("failed to load stats. something broke");
+        reply("failed to load stats");
     }
 };

@@ -9,7 +9,7 @@ module.exports.config = {
     author: "Sethdico",
     version: "9.1",
     category: "Utility",
-    description: "temp mail",
+    description: "temporary email generator",
     adminOnly: false,
     usePrefix: false,
     cooldown: 5,

@@ -15,7 +15,7 @@ module.exports.run = async function ({ event, args, api, reply }) {
     const apiKey = process.env.SIMSIMI_API_KEY || "3c911401e5f5452fb6585f0ccb97cdb31b30ddec";
 
     if (!args[0]) {
-        return reply("🐥 **simsimi chat**\n━━━━━━━━━━━━━━━━\nhow to use:\n  sim <message>\n  sim teach <question> | <answer>\n\nexample:\n  sim how are you?\n  sim teach who is seth? | my developer");
+        return reply("simsimi chat\n\nusage:\nsim <message>\nsim teach <question> | <answer>\n\nexample:\nsim how are you?\nsim teach who is seth? | my developer");
     }
 
     if (args[0] === "teach") {

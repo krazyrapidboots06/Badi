@@ -27,7 +27,7 @@ module.exports = function (event) {
         }
       });
     } catch (e) {
-      console.error("❌ feedback failed");
+      console.error("feedback failed");
     }
   };
 };

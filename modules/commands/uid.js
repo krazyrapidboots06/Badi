@@ -2,7 +2,7 @@ module.exports.config = {
     name: "uid",
     author: "sethdico",
     category: "Utility",
-    description: "see your user profile card",
+    description: "get your user id and profile info",
     adminOnly: false,
     usePrefix: false,
     cooldown: 5
@@ -14,12 +14,10 @@ module.exports.run = async function ({ event, api, reply }) {
     
     try {
         const info = await api.getUserInfo(id);
-        const msg = `👤 **user profile**\n\nname: ${info.name}\nid: ${id}\n\nstatus: active`;
+        const msg = `user profile\n\nname: ${info.name}\nid: ${id}\nstatus: active`;
 
         await api.sendAttachment("image", pic, id);
-        
-        const buttons = [{ type: "postback", title: "copy id", payload: "copy_id" }];
-        await api.sendButton(msg.toLowerCase(), buttons, id);
+        await api.sendMessage(msg.toLowerCase(), id);
         
     } catch (e) {
         reply(`id: ${id}`);

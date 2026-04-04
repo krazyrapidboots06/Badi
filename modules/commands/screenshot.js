@@ -6,7 +6,7 @@ module.exports.config = {
     author: "sethdico",
     version: "1.3",
     category: "Utility",
-    adminOnly: false,
+    description: "capture website screenshots",
     usePrefix: false,
     cooldown: 5,
 };

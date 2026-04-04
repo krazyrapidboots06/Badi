@@ -6,7 +6,7 @@ module.exports.config = {
     author: "sethdico",
     version: "1.2",
     category: "Media",
-    adminOnly: false,
+    description: "search and download images from Pinterest",
     usePrefix: false,
     cooldown: 10,
 };
@@ -15,7 +15,7 @@ module.exports.run = async function ({ event, args, api, reply }) {
     const senderID = event.sender.id;
 
     if (!args.length) {
-        return reply("📌 **pinterest guide**\n━━━━━━━━━━━━━━━━\nhow to use:\n  pin <search>\n  pin <search> <count>\n\nexamples:\n  pin aesthetic room 5\n  pin anime wallpapers\n\nnote: maximum is 10 images.");
+        return reply("pinterest\n\nusage:\npin <search>\npin <search> <count>\n\nexamples:\npin aesthetic room 5\npin anime wallpapers\n\nnote: maximum is 10 images");
     }
 
     let count = 5;
@@ -42,7 +42,7 @@ module.exports.run = async function ({ event, args, api, reply }) {
             return reply("couldn't find any images for that search");
         }
 
-        reply(`📷 found ${Math.min(images.length, count)} images. sending them now...`);
+        reply(`found ${Math.min(images.length, count)} images. sending them now...`);
 
         images.slice(0, count).forEach((img, index) => {
             setTimeout(() => {

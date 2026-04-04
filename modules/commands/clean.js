@@ -29,8 +29,8 @@ module.exports.run = async function ({ reply }) {
                 console.error(`Failed to clean file ${file}:`, e.message);
             }
         }
-        reply(`🧹 cleaned ${cleaned} old files`);
+        reply(`cleaned ${cleaned} old files`);
     } catch (e) { 
-        reply("❌ cleanup failed"); 
+        reply("cleanup failed"); 
     }
 };

@@ -3,7 +3,7 @@ module.exports.config = {
     author: "sethdico",
     version: "2.2",
     category: "Utility",
-    description: "the dev",
+    description: "bot developer info",
     adminOnly: false,
     usePrefix: false,
     cooldown: 5,
@@ -11,19 +11,14 @@ module.exports.config = {
 
 module.exports.run = async function ({ event, api, args }) {
   const id = event.sender.id;
-  const gif = "https://media1.tenor.com/m/Mq6ZeawKT1MAAAAd/nazo-no-kanojo-x-nazo-no-kanojo.gif";
-  const reason = args.slice(1).join(" ") || "working on some stuff, be back soon";
-  const msg = "i'm seth asher and i made this bot. check my links if u want to talk";
+  const msg = `seth asher salinguhay
 
-  const buttons = [
-    { type: "web_url", url: "https://www.facebook.com/s8tsh.3r", title: "facebook" },
-    { type: "web_url", url: "https://github.com/sethdico", title: "github" }
-  ];
+fb: seth09asher
+github: sethdico`;
 
   try {
-    await api.sendAttachment("image", gif, id);
-    await api.sendButton(msg, buttons, id);
+    await api.sendMessage(msg, id);
   } catch (e) {
-    api.sendMessage("seth asher salinguhay\nfb: seth09asher\ngithub: sethdico", id);
+    api.sendMessage("seth asher salinguhay", id);
   }
 };

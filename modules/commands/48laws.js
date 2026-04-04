@@ -21,7 +21,7 @@ module.exports.config = {
     name: "48laws",
     author: "sethdico",
     category: "Fun",
-    description: "get a random rule from robert greene's book 'the 48 laws of power'.",
+    description: "48 laws of power",
     adminOnly: false,
     usePrefix: false,
     cooldown: 2,
@@ -34,11 +34,10 @@ module.exports.run = async function ({ event, args, api, reply }) {
         num = Math.floor(Math.random() * 48) + 1;
     }
 
-    const msg = `📖 **law #${num}**\n━━━━━━━━━━━━━━━━\n${LAWS[num - 1]}`;
-    const btns =[{ type: "postback", title: "another law", payload: "48laws" }];
+    const msg = `law #${num}\n\n${LAWS[num - 1]}`;
     
     try {
-        await api.sendButton(msg, btns, event.sender.id);
+        await api.sendMessage(msg, event.sender.id);
     } catch (e) {
         reply(msg);
     }

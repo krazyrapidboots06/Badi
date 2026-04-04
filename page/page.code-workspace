@@ -1,0 +1,19 @@
+{
+	"folders": [
+		{
+			"path": "."
+		},
+		{
+			"path": "../tests"
+		},
+		{
+			"path": "../cache"
+		},
+		{
+			"path": "../config"
+		},
+		{
+			"path": "../modules"
+		}
+	]
+}

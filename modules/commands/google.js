@@ -15,7 +15,7 @@ module.exports.run = async function ({ event, args, api, reply }) {
     const query = args.join(" ");
 
     if (!query) {
-        return reply("🔎 **google search**\n━━━━━━━━━━━━━━━━\nhow to use:\n  google <search term>\n\nexample:\n  google how to bake a cake");
+        return reply(`🔎 GOOGLE SEARCH\n━━━━━━━━━━━━━━━━\nSearch the web instantly\n\nUSAGE:\n• google <search term>\n\nEXAMPLE:\n• google how to bake a cake`);
     }
 
     if (api.sendTypingIndicator) api.sendTypingIndicator(true, senderID);

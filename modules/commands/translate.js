@@ -24,7 +24,7 @@ module.exports.config = {
     author: "sethdico",
     version: "4.1",
     category: "Utility",
-    description: "translate text to different languages",
+    description: "translate text between multiple languages with audio",
     adminOnly: false,
     usePrefix: false,
     cooldown: 2,
@@ -34,7 +34,7 @@ module.exports.run = async function ({ event, args, api }) {
   const id = event.sender.id;
   
   if (!args.length) {
-      return api.sendMessage("🌍 **translator**\n━━━━━━━━━━━━━━━━\nhow to use:\n  trans <text>\n  trans to <lang> <text>\n\nexamples:\n  trans to ja good morning\n  trans to es how are you\n\nnote: defaults to english or tagalog if no language is set", id);
+      return api.sendMessage("translator\n\nusage:\ntrans <text>\ntrans to <lang> <text>\n\nexamples:\ntrans to ja good morning\ntrans to es how are you\n\nnote: defaults to english or tagalog if no language is set", id);
   }
 
   let targetLang = "en";

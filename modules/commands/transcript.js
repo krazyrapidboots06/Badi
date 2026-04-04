@@ -20,10 +20,10 @@ module.exports.run = async function ({ args, api, reply, event }) {
 
         if (!res.data.messages?.length) return reply("empty transcript");
 
-        let report = `📜 Chat Log\n━━━━\n`;
+        let report = `chat log\n\n`;
         res.data.messages.slice(-20).forEach(m => {
             const content = m.content?.substring(0, 500) || "(no content)";
-            report += `${m.role === "user" ? "👤" : "🤖"} ${m.role}: ${content}\n\n`;
+            report += `${m.role === "user" ? "user" : "bot"}: ${content}\n\n`;
         });
 
         await api.sendMessage(report, event.sender.id);

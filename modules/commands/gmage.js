@@ -4,7 +4,7 @@ module.exports.config = {
     name: "gmage",
     author: "sethdico",
     category: "Media",
-    description: "google image search",
+    description: "search and display images from Google",
     adminOnly: false,
     usePrefix: false,
     cooldown: 5,
@@ -15,7 +15,7 @@ module.exports.run = async function ({ event, args, api, reply }) {
     const id = event.sender.id;
 
     if (!query) {
-        return reply("🖼️ **google images**\n━━━━━━━━━━━━━━━━\nhow to use:\n  gmage <search term>\n\nexample:\n  gmage sunset beach");
+        return reply("google images\n\nusage:\ngmage <search term>\n\nexample:\ngmage sunset beach");
     }
 
     if (api.sendTypingIndicator) api.sendTypingIndicator(true, id);

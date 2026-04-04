@@ -21,7 +21,7 @@ module.exports = async function (event, api) {
         }
 
         if (!isNaN(payload)) {
-            return reply(`📋 user id copied:\n\n${payload}\n\n(ready to paste)`);
+            return reply(`user id copied:\n${payload}`);
         }
     }
 

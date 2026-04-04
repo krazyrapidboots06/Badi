@@ -4,7 +4,7 @@ module.exports.config = {
     name: "pokemon",
     author: "sethdico",
     category: "Fun",
-    description: "pokedex info.",
+    description: "get detailed Pokédex information for any Pokémon",
     adminOnly: false,
     usePrefix: false,
     cooldown: 3,
@@ -15,7 +15,7 @@ module.exports.run = async function ({ event, args, api, reply }) {
     const query = args[0]?.toLowerCase();
     
     if (!query) {
-        return reply("⚡ **pokedex**\n━━━━━━━━━━━━━━━━\nhow to use:\n  pokemon <name/id/random>\n\nexample:\n  pokemon pikachu\n  pokemon random");
+        return reply("pokedex\n\nusage:\npokemon <name/id/random>\n\nexample:\npokemon pikachu\npokemon random");
     }
 
     const id = query === "random" ? Math.floor(Math.random() * 1025) + 1 : query;
@@ -32,11 +32,7 @@ module.exports.run = async function ({ event, args, api, reply }) {
         const stats = data.stats.map(s => `${s.stat.name.slice(0, 3)}: ${s.base_stat}`).join(" | ");
         const img = data.sprites.other["official-artwork"].front_default;
 
-        const msg = `⚡ **${name}** (#${data.id})\n` +
-                    `🧬 type: ${types}\n` +
-                    `📏 height: ${data.height / 10}m | ⚖️ weight: ${data.weight / 10}kg\n` +
-                    `✨ abilities: ${abilities}\n\n` +
-                    `📊 **stats**\n${stats}`.toLowerCase();
+        const msg = `${name} (#${data.id})\ntype: ${types}\nheight: ${data.height / 10}m | weight: ${data.weight / 10}kg\nabilities: ${abilities}\n\nstats\n${stats}`.toLowerCase();
 
         if (img) await api.sendAttachment("image", img, senderID);
         await api.sendMessage(msg, senderID);

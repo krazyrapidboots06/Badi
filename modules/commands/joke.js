@@ -5,7 +5,7 @@ module.exports.config = {
     author: "Sethdico",
     version: "4.0",
     category: "Fun",
-    description: "Random jokes with flow.",
+    description: "random jokes",
     adminOnly: false,
     usePrefix: false,
     cooldown: 2,
@@ -14,11 +14,9 @@ module.exports.config = {
 module.exports.run = async function ({ event, api }) {
   try {
     const res = await http.get("https://official-joke-api.appspot.com/random_joke");
-    const msg = `🤣 ${res.data.setup}\n\n👉 ${res.data.punchline}`;
-    const buttons = [{ type: "postback", title: "🔄 Another One", payload: "joke" }];
-
-    api.sendButton(msg, buttons, event.sender.id);
+    const msg = `${res.data.setup}\n\n${res.data.punchline}`;
+    api.sendMessage(msg, event.sender.id);
   } catch (e) {
-    api.sendMessage("🤣 why did the bot fail? because the api was down", event.sender.id);
+    api.sendMessage("joke api is down", event.sender.id);
   }
 };

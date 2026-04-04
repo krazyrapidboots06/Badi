@@ -15,7 +15,7 @@ module.exports.run = async function ({ event, args, api, reply }) {
     const prompt = args.join(" ");
 
     if (!prompt) {
-        return reply("🧠 **perplexity**\n━━━━━━━━━━━━━━━━\nwhat should i think about?\n\nexample:\n  perplexity how does quantum physics work");
+        return reply("perplexity\n\nusage:\nperplexity <question>\n\nexample:\nperplexity how does quantum physics work");
     }
 
     if (api.sendTypingIndicator) api.sendTypingIndicator(true, senderID);
@@ -29,7 +29,7 @@ module.exports.run = async function ({ event, args, api, reply }) {
         
         if (!answer) return reply("my brain is empty");
 
-        await api.sendMessage(`🧠 **perplexity reasoning**\n\n${answer}`.toLowerCase(), senderID);
+        await api.sendMessage(`${answer}`.toLowerCase(), senderID);
 
     } catch (e) {
         reply("perplexity is offline or busy");

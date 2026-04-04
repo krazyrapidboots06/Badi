@@ -16,7 +16,7 @@ module.exports.run = async function ({ event, args, api, reply }) {
     const input = args.join(" ").trim();
     
     if (!input) {
-        return reply("🌐 **webpilot**\n━━━━━━━━━━━━━━━━\nhow to use:\n  webpilot <query>\n\nexample:\n  webpilot latest tech news today");
+        return reply("webpilot\n\nusage:\nwebpilot <query>\n\nexample:\nwebpilot latest tech news today");
     }
     
     if (api.sendTypingIndicator) api.sendTypingIndicator(true, senderID);

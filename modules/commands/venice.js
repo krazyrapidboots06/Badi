@@ -15,7 +15,7 @@ module.exports.run = async function ({ event, args, api, reply }) {
     const query = args.join(" ");
 
     if (!query) {
-        return reply("🎭 **venice ai**\n━━━━━━━━━━━━━━━━\nhow to use:\n  venice <question>\n\nexample:\n  venice explain string theory");
+        return reply("venice ai\n\nusage:\nvenice <question>\n\nexample:\nvenice explain string theory");
     }
 
     if (api.sendTypingIndicator) api.sendTypingIndicator(true, senderID);
@@ -32,7 +32,7 @@ module.exports.run = async function ({ event, args, api, reply }) {
         const answer = res.data.answer;
 
         if (answer) {
-            await api.sendMessage(`🎭 **venice ai**\n\n${answer}`.toLowerCase(), senderID);
+            await api.sendMessage(`${answer}`.toLowerCase(), senderID);
         } else {
             reply("couldn't get a response from venice");
         }

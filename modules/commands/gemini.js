@@ -4,7 +4,7 @@ module.exports.config = {
     name: "gemini",
     author: "sethdico",
     category: "AI",
-    description: "gemini 3 pro with vision.",
+    description: "Google Gemini AI with advanced vision capabilities",
     adminOnly: false,
     usePrefix: false,
     cooldown: 5,
@@ -21,7 +21,7 @@ module.exports.run = async function ({ event, args, api, reply }) {
     ].filter(a => a.type === "image").map(a => a.payload.url);
 
     if (!prompt && attachments.length === 0) {
-        return reply("✨ **gemini 3 pro**\n━━━━━━━━━━━━━━━━\nhow to use:\n  gemini <query>\n  gemini <query> (reply to an image)\n  gemini clear (reset chat)\n\nexample:\n  gemini tell me a story");
+        return reply("gemini ai\n\nusage:\ngemini <query>\ngemini <query> (reply to image)\ngemini clear (reset chat)\n\nexample:\ngemini tell me a story");
     }
 
     if (!cookie) return reply("gemini cookie is missing");

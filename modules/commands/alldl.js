@@ -14,7 +14,18 @@ module.exports.run = async function ({ event, args, api, reply }) {
     let raw = event.message?.reply_to?.text || args.join("");
     
     if (!raw) {
-        return reply("📥 **all in one downloader**\ngrabs vids from tiktok, fb, ig, youtube, x, etc.\n\nusage:\n- alldl <link>\n- or just reply to a link with 'alldl'");
+        return reply(`all in one downloader
+
+downloads videos from social media platforms
+
+usage:
+• alldl <link>
+• reply to link with 'alldl'
+
+note: if links can't be sent, use dots or spaces
+examples:
+• alldl example[dot]com
+• alldl example dot com`);
     }
 
     const urlRegex = /(https?:\/\/[^\s]+)/gi;
@@ -23,7 +34,7 @@ module.exports.run = async function ({ event, args, api, reply }) {
     url = url.replace(/\[dot\]|\(dot\)/gi, ".");
 
     if (!url.includes("http")) {
-        return reply("that doesn't look like a valid link.");
+        return reply("invalid link format");
     }
 
     if (api.sendTypingIndicator) api.sendTypingIndicator(true, event.sender.id);
@@ -38,10 +49,10 @@ module.exports.run = async function ({ event, args, api, reply }) {
         if (vid) {
             await api.sendAttachment("video", vid, event.sender.id);
         } else {
-            reply("couldn't grab the video.");
+            reply("couldn't download video");
         }
     } catch (e) {
-        reply("failed. link is either private or broken.");
+        reply("download failed - link may be private or broken");
     } finally {
         if (api.sendTypingIndicator) api.sendTypingIndicator(false, event.sender.id);
     }

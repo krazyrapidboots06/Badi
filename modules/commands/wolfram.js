@@ -4,7 +4,7 @@ module.exports.config = {
     name: "wolfram",
     author: "sethdico",
     category: "Utility",
-    description: "computational knowledge search",
+    description: "solve math problems and get computational answers",
     adminOnly: false,
     usePrefix: false,
     cooldown: 5,
@@ -15,7 +15,7 @@ module.exports.run = async function ({ event, args, api, reply }) {
     const input = args.join(" ");
     
     if (!input) {
-        return reply("🧮 **wolfram alpha guide**\n━━━━━━━━━━━━━━━━\nhow to use:\n  wolfram <query>\n\nexample:\n  wolfram derivative of x^2\n  wolfram distance to moon");
+        return reply("wolfram alpha\n\nusage:\nwolfram <query>\n\nexample:\nwolfram derivative of x^2\nwolfram distance to moon");
     }
 
     if (api.sendTypingIndicator) api.sendTypingIndicator(true, id);
@@ -37,7 +37,7 @@ module.exports.run = async function ({ event, args, api, reply }) {
 
         const output = data.pods.map(pod => {
             const text = pod.subpods.map(s => s.plaintext).filter(Boolean).join("\n");
-            return text ? `📌 **${pod.title}**\n${text}` : "";
+            return text ? `${pod.title}\n${text}` : "";
         }).filter(Boolean).join("\n\n");
 
         if (!output) return reply("no clear results found");

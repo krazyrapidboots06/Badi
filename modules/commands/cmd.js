@@ -15,7 +15,7 @@ module.exports.run = async function ({ args, reply }) {
     const target = args[1]?.toLowerCase();
 
     if (!action || !target) {
-        return reply("🛠️ **command manager**\n━━━━━━━━━━━━━━━━\nhow to use:\n  cmd off <name>\n  cmd on <name>\n\nexample:\n  cmd off gmage");
+        return reply("command manager\n\nusage:\ncmd off <name>\ncmd on <name>\n\nexample:\ncmd off gmage");
     }
 
     if (!global.client.commands.has(target)) return reply("that command doesn't exist");
