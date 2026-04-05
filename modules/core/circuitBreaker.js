@@ -1,5 +1,8 @@
-class CircuitBreaker {
+const EventEmitter = require('events');
+
+class CircuitBreaker extends EventEmitter {
     constructor(options = {}) {
+        super();
         this.failureThreshold = options.failureThreshold || 5;
         this.resetTimeout = options.resetTimeout || 60000;
         this.monitoringPeriod = options.monitoringPeriod || 10000;
@@ -69,6 +72,8 @@ class CircuitBreaker {
         this.failureCount++;
         this.metrics.totalFailures++;
         this.lastFailureTime = Date.now();
+
+        this.emit('error', error);
 
         if (this.failureCount >= this.failureThreshold) {
             this.setState('OPEN');
