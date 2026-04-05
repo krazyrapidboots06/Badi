@@ -1,0 +1,42 @@
+const winston = require('winston');
+const path = require('path');
+
+const logFormat = winston.format.combine(
+    winston.format.timestamp({ format: 'YYYY-MM-DD HH:mm:ss' }),
+    winston.format.errors({ stack: true }),
+    winston.format.json()
+);
+
+const logger = winston.createLogger({
+    level: process.env.LOG_LEVEL || 'info',
+    format: logFormat,
+    defaultMeta: { service: 'amdusbot' },
+    transports: [
+        new winston.transports.File({ 
+            filename: path.join(process.cwd(), 'logs', 'error.log'), 
+            level: 'error' 
+        }),
+        new winston.transports.File({ 
+            filename: path.join(process.cwd(), 'logs', 'combined.log') 
+        })
+    ]
+});
+
+if (process.env.NODE_ENV !== 'production') {
+    logger.add(new winston.transports.Console({
+        format: winston.format.combine(
+            winston.format.colorize(),
+            winston.format.simple()
+        )
+    }));
+}
+
+module.exports = {
+    info: (message, meta = {}) => logger.info(message, meta),
+    error: (message, meta = {}) => logger.error(message, meta),
+    warn: (message, meta = {}) => logger.warn(message, meta),
+    debug: (message, meta = {}) => logger.debug(message, meta),
+    command: (command, user, meta = {}) => logger.info(`Command: ${command}`, { user, ...meta }),
+    api: (endpoint, method, status, responseTime, meta = {}) => logger.info(`API: ${method} ${endpoint}`, { status, responseTime, ...meta }),
+    error: (error, context = {}) => logger.error(error.message, { stack: error.stack, ...context })
+};
