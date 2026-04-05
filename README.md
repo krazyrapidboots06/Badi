@@ -54,15 +54,60 @@ Created by **[Seth Asher Salinguhay](https://www.facebook.com/seth09asher)**
 ### Installation
 1. Clone the repository
 2. Install dependencies: `npm install`
-3. Configure environment variables
-4. Start: `node index.js`
+3. Copy `.env.example` to `.env` and configure
+4. Start: `npm start` or `npm run dev` for development
+
+### Available Scripts
+- `npm start` - Production mode
+- `npm run dev` - Development with nodemon
+- `npm test` - Run tests
+- `npm run lint` - Check code style
+- `npm run lint:fix` - Fix code style issues
+- `npm run format` - Format code with Prettier
+- `npm run health` - Check application health
+- `npm run logs` - View application logs
+
+### Code Style
+- Use 4 spaces for indentation
+- Single quotes for strings
+- No trailing semicolons
+- No inline comments
+- Human-readable variable names
 
 ### Environment Variables
 ```env
+# Required
 PAGE_ACCESS_TOKEN=your_token
 VERIFY_TOKEN=your_verify_token
-MONGODB_URI=your_mongodb_uri
 ADMINS=your_facebook_id
+
+# Database
+MONGODB_URI=your_mongodb_uri
+
+# AI Services
+OPENAI_API_KEY=your_openai_key
+CHIPP_API_KEY=your_chipp_key
+CHIPP_MODEL=gpt-4
+
+# Redis (for high-load deployments)
+REDIS_HOST=localhost
+REDIS_PORT=6379
+REDIS_PASSWORD=your_redis_password
+
+# External APIs
+DICT_API_KEY=your_dict_key
+GOOGLE_API_KEY=your_google_key
+GOOGLE_CX=your_google_cx
+NASA_API_KEY=your_nasa_key
+WOLFRAM_APP_ID=your_wolfram_id
+APY_TOKEN=your_apy_token
+
+# Server Configuration
+NODE_ENV=production
+PORT=8080
+BOT_NAME=Amdusbot
+APP_SECRET=your_app_secret
+LOG_LEVEL=info
 ```
 
 ---

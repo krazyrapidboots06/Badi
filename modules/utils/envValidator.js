@@ -10,9 +10,22 @@ const requiredEnvVars = [
 const optionalEnvVars = [
     'MONGODB_URI',
     'OPENAI_API_KEY',
+    'CHIPP_API_KEY',
+    'CHIPP_MODEL',
+    'REDIS_HOST',
+    'REDIS_PORT',
+    'REDIS_PASSWORD',
+    'DICT_API_KEY',
+    'GOOGLE_API_KEY',
+    'GOOGLE_CX',
+    'NASA_API_KEY',
+    'WOLFRAM_APP_ID',
+    'APY_TOKEN',
     'NODE_ENV',
     'LOG_LEVEL',
-    'PORT'
+    'PORT',
+    'BOT_NAME',
+    'APP_SECRET'
 ];
 
 function validateEnvironment() {
