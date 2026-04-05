@@ -18,6 +18,7 @@ const Queue = require('./modules/core/queue');
 const { validateStartup } = require('./modules/utils/envValidator');
 const { getOverallHealth } = require('./modules/utils/healthCheck');
 const logger = require('./modules/utils/structuredLogger');
+const MonitoringSystem = require('./modules/utils/monitoring');
 
 const startupValidation = validateStartup();
 if (!startupValidation.readyToStart) {
@@ -122,6 +123,8 @@ global.userCache = new CacheManager(CONSTANTS.MAX_CACHE_SIZE, CONSTANTS.ONE_DAY)
 global.messageCache = new CacheManager(CONSTANTS.MAX_CACHE_SIZE, CONSTANTS.SIX_HOURS);
 global.apiQueue = new Queue(2, 300);
 
+const monitoring = new MonitoringSystem();
+
 if (!fs.existsSync(global.CACHE_PATH)) {
     fs.mkdirSync(global.CACHE_PATH, { recursive: true });
 }
@@ -131,6 +134,7 @@ function healthCheck() {
 }
 
 global.healthCheck = healthCheck;
+global.monitoring = monitoring;
 
 (async () => {
     await new Promise(resolve => db.loadBansIntoMemory(banSet => { 
@@ -153,6 +157,15 @@ global.healthCheck = healthCheck;
     app.use(validateInput);
     app.use(rateLimiter);
     
+    app.use((req, res, next) => {
+        const startTime = Date.now();
+        res.on('finish', () => {
+            const responseTime = Date.now() - startTime;
+            monitoring.recordRequest(res.statusCode < 400, responseTime);
+        });
+        next();
+    });
+    
     app.get('/', (req, res) => {
         res.json({ 
             status: 'online', 
@@ -166,6 +179,30 @@ global.healthCheck = healthCheck;
         const health = healthCheck();
         const statusCode = health.status === 'critical' ? 503 : 200;
         res.status(statusCode).json(health);
+    });
+
+    app.get('/metrics', (req, res) => {
+        const metrics = monitoring.getMetrics();
+        res.json(metrics);
+    });
+
+    app.get('/monitoring', (req, res) => {
+        const report = monitoring.getPerformanceReport();
+        res.json(report);
+    });
+
+    app.get('/admin/status', (req, res) => {
+        const userId = req.query.userId;
+        if (!userId || !global.ADMINS.has(userId)) {
+            return res.status(403).json({ error: 'Admin access required' });
+        }
+
+        res.json({
+            system: monitoring.getMetrics(),
+            webhook: webhook.getMetrics(),
+            health: healthCheck(),
+            alerts: monitoring.getAlerts()
+        });
     });
     
     app.get('/webhook', (req, res) => {
@@ -197,6 +234,7 @@ global.healthCheck = healthCheck;
         logger.info(`Environment: ${process.env.NODE_ENV || 'development'}`);
         logger.info(`Bot name: ${global.BOT_NAME}`);
         logger.info(`Admins: ${global.ADMINS.size} configured`);
+        logger.info(`Monitoring endpoints available at /metrics and /monitoring`);
     });
 })();
 

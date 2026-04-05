@@ -16,27 +16,27 @@ module.exports.run = async function ({ args, reply }) {
     const isUnban = action === "unban";
     
     let targetID = isUnban ? args[1] : (action === "ban" ? args[1] : args[0]);
-    let reason = args.slice(isUnban ? 2 : (action === "ban" ? 2 : 1)).join(" ") || "no reason.";
+    let reason = args.slice(isUnban ? 2 : (action === "ban" ? 2 : 1)).join(" ") || "no reason";
 
     if (!targetID || isNaN(targetID)) {
-        return reply("usage:\n  ban <id> <reason>\n  unban <id>");
+        return reply("to ban: ban <user id> <reason>\nto unban: unban <user id>");
     }
 
     if (global.ADMINS.has(targetID)) {
-        return reply("can't ban an admin.");
+        return reply("can't ban an admin user");
     }
 
     if (isUnban) {
         await db.removeBan(targetID);
         global.BANNED_USERS.delete(targetID);
-        return reply(`unbanned ${targetID}.`);
+        return reply(`unbanned ${targetID}`);
     }
 
     try {
         await db.addBan(targetID, reason);
         global.BANNED_USERS.add(targetID);
-        reply(`banned ${targetID}.\nreason: ${reason}`.toLowerCase());
+        reply(`banned ${targetID}\nreason: ${reason}`.toLowerCase());
     } catch (e) {
-        reply("failed to ban.");
+        reply("something went wrong while banning");
     }
 };

@@ -1,4 +1,4 @@
-const { http } = require("../core/utils");
+const { http } = require("../utils");
 const CacheManager = require("../core/cache");
 
 const sessions = new CacheManager(1000, 3600000);

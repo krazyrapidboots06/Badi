@@ -7,7 +7,7 @@ module.exports.config = {
     description: "google image search",
     adminOnly: false,
     usePrefix: false,
-    cooldown: 5,
+    cooldown: 5
 };
 
 module.exports.run = async function ({ event, args, api, reply }) {
@@ -15,10 +15,12 @@ module.exports.run = async function ({ event, args, api, reply }) {
     const id = event.sender.id;
 
     if (!query) {
-        return reply("🖼️ **google images**\n━━━━━━━━━━━━━━━━\nhow to use:\n  gmage <search term>\n\nexample:\n  gmage sunset beach");
+        return reply("search for images like this: gmage sunset beach");
     }
 
-    if (api.sendTypingIndicator) api.sendTypingIndicator(true, id);
+    if (api.sendTypingIndicator) {
+        api.sendTypingIndicator(true, id);
+    }
 
     try {
         const res = await http.get("https://api-library-kohi.onrender.com/api/gmage", {
@@ -26,7 +28,9 @@ module.exports.run = async function ({ event, args, api, reply }) {
         });
 
         const images = res.data.data;
-        if (!images || !images.length) return reply("couldn't find any images.");
+        if (!images || !images.length) {
+            return reply("no images found for that");
+        }
 
         const cards = images.slice(0, 10).map(url => ({
             title: query.substring(0, 80),
@@ -36,8 +40,10 @@ module.exports.run = async function ({ event, args, api, reply }) {
 
         await api.sendCarousel(cards, id);
     } catch (e) {
-        reply("google is acting up.");
+        reply("google is not working right now");
     } finally {
-        if (api.sendTypingIndicator) api.sendTypingIndicator(false, id);
+        if (api.sendTypingIndicator) {
+            api.sendTypingIndicator(false, id);
+        }
     }
 };

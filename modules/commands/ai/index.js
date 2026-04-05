@@ -98,13 +98,13 @@ module.exports.run = async function ({ event, args, api, reply }) {
     if (!query && ctx.length === 0) {
         userLock.delete(uid);
         if (api.sendTypingIndicator) api.sendTypingIndicator(false, uid);
-        return reply("🧠 **amdus ai guide**\n━━━━━━━━━━━━━━━━\nhow to use:\n  \u2022 type your message directly\n  \u2022 reply to any image or file with a question\n  \u2022 type 'amdus reset' to start a new session\n\n📸 **vision & files**:\n  \u2022 reply to an image with: 'what is this?'\n  \u2022 or use other models with image vision: 'gemini what is this?' (reply to image)\n\ncapabilities:\n  \u2022 vision: analyze photos and short videos\n  \u2022 files: read/write pdf, docx, and pptx\n  \u2022 search: real-time web access");
+        return reply("amdus ai help\n\nhow to use:\n  type your message directly\n  reply to images/files with questions\n  type 'amdus reset' for new session\n\nvision & files:\n  reply to image: 'what is this?'\n  reply to document: 'summarize this'\n\nfeatures:\n  vision: analyze photos and videos\n  files: read pdf, docx, pptx\n  search: real-time web access");
     }
 
     if (ctx.length > 0 && !query) {
         userLock.delete(uid);
         if (api.sendTypingIndicator) api.sendTypingIndicator(false, uid);
-        return reply("📂 **media received**\n━━━━━━━━━━━━━━━━\ni see the file! now, reply to it with your question.\n\nexamples:\n  \u2022 'summarize this document'\n  \u2022 'what is in this photo?'\n  \u2022 'gemini explain this image' (for vision models)");
+        return reply("file received\n\ni see the file! now reply to it with your question.\n\nexamples:\n  'summarize this document'\n  'what is in this photo?'\n  'gemini explain this image' (for vision models)");
     }
 
     if (api.sendTypingIndicator) api.sendTypingIndicator(true, uid);
@@ -121,7 +121,7 @@ module.exports.run = async function ({ event, args, api, reply }) {
 
         if (!res || res.error) {
             userLock.delete(uid);
-            return reply("api is a bit busy. try again in a sec.");
+            return reply("ai is busy. try again in a sec.");
         }
 
         const newSessionId = res.data?.chatSessionId;
@@ -134,7 +134,7 @@ module.exports.run = async function ({ event, args, api, reply }) {
         }
 
         let text = parseAI(res);
-        if (!text) { userLock.delete(uid); return reply("no response."); }
+        if (!text) { userLock.delete(uid); return reply("no response"); }
 
         const mdLinkRegex = /\[(.*?)\]\((.*?)\)/gi;
         let fileHandled = false;
